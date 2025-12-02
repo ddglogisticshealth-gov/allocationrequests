@@ -55,6 +55,111 @@
             margin: 0 auto;
         }
         
+        /* ========== ALLOCATION HISTORY STYLES ========== */
+        .allocation-history {
+            background-color: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .history-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .history-filter .form-control {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .history-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .history-summary-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .history-summary-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .history-summary-card .label {
+            font-size: 14px;
+            color: var(--gray);
+            font-weight: 600;
+        }
+        
+        /* ========== VOTE DISTRIBUTION STYLES ========== */
+        .vote-distribution {
+            background-color: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .vote-distribution-chart {
+            height: 300px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .vote-distribution-table {
+            margin-top: 20px;
+        }
+        
+        .vote-distribution-table th {
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+        }
+        
+        /* ========== SIGNATURE VARIATIONS ========== */
+        .signature-ddgonly,
+        .signature-directoronly {
+            display: none;
+        }
+        
+        .signature-ddgonly .signature-line,
+        .signature-directoronly .signature-line {
+            margin: 20px 0 8px;
+            height: 1px;
+            background: var(--dark);
+        }
+        
+        .signature-ddgonly .signature-label,
+        .signature-directoronly .signature-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .signature-ddgonly .signature-name,
+        .signature-directoronly .signature-name {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .signature-ddgonly .signature-title,
+        .signature-directoronly .signature-title {
+            font-size: 13px;
+            color: var(--gray);
+        }
+        
         /* ========== TYPOGRAPHY ========== */
         h1, h2, h3, h4, h5, h6 {
             margin-bottom: 0.5rem;
@@ -162,6 +267,11 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
             background-color: white;
+        }
+        
+        .form-control.readonly {
+            background-color: #e9ecef;
+            cursor: not-allowed;
         }
         
         .role-selector {
@@ -549,7 +659,7 @@
             background-color: white;
             border-radius: var(--border-radius-lg);
             width: 100%;
-            max-width: 700px;
+            max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
@@ -847,6 +957,138 @@
             color: var(--gray);
         }
         
+        .hospital-signature-section {
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+        
+        /* ========== STATUS CARDS FOR ADMIN ========== */
+        .status-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .status-card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .status-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .status-card-count {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .status-card-pending {
+            background-color: var(--warning);
+        }
+        
+        .status-card-approved {
+            background-color: var(--secondary);
+        }
+        
+        .status-card-rejected {
+            background-color: var(--danger);
+        }
+        
+        .status-card-completed {
+            background-color: var(--primary);
+        }
+        
+        .selection-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .selection-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .selection-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* ========== HOSPITAL SUMMARY STYLES ========== */
+        .hospital-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .hospital-summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .hospital-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .hospital-summary-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .hospital-summary-count {
+            background-color: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .hospital-summary-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .hospital-stat-item {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .hospital-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+        
+        .hospital-stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
         /* ========== UTILITY CLASSES ========== */
         .text-center {
             text-align: center;
@@ -977,6 +1219,10 @@
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            
+            .hospital-summary-grid {
+                grid-template-columns: 1fr 1fr;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1052,6 +1298,10 @@
                 min-width: 100%;
                 max-width: 100%;
                 width: 100%;
+            }
+            
+            .hospital-summary-grid {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -1217,6 +1467,8 @@
                     <div class="user-tab active" data-tab="allocation">Allocation Request</div>
                     <div class="user-tab" data-tab="myRequests">My Requests</div>
                     <div class="user-tab" data-tab="allocations">Allocation Status</div>
+                    <div class="user-tab" data-tab="history">Allocation History</div>
+                    <div class="user-tab" data-tab="voteDistribution">Vote Distribution</div>
                 </div>
                 
                 <!-- Allocation Request Tab -->
@@ -1228,7 +1480,7 @@
                                 <div class="form-col">
                                     <div class="form-group">
                                         <label class="form-label" for="hospitalName">Hospital Name *</label>
-                                        <input type="text" id="hospitalName" class="form-control" placeholder="Enter hospital name" required>
+                                        <input type="text" id="hospitalName" class="form-control readonly" placeholder="Hospital name will be auto-filled" readonly required>
                                     </div>
                                 </div>
                                 <div class="form-col">
@@ -1546,6 +1798,136 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Allocation History Tab -->
+                <div id="historyTab" class="user-tab-content hidden">
+                    <div class="allocation-history">
+                        <h2 class="section-title">Allocation History</h2>
+                        
+                        <div class="history-filter">
+                            <div class="form-group">
+                                <label class="form-label" for="historyYearFilter">Year</label>
+                                <select id="historyYearFilter" class="form-control">
+                                    <option value="all">All Years</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="historyVoteFilter">Vote Number</label>
+                                <select id="historyVoteFilter" class="form-control">
+                                    <option value="all">All Votes</option>
+                                    <!-- Vote options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="historyStatusFilter">Status</label>
+                                <select id="historyStatusFilter" class="form-control">
+                                    <option value="all">All Status</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="history-summary">
+                            <div class="history-summary-card">
+                                <div class="value" id="totalHistoricalRequests">0</div>
+                                <div class="label">Total Requests</div>
+                            </div>
+                            <div class="history-summary-card">
+                                <div class="value" id="totalHistoricalAmount">LKR 0</div>
+                                <div class="label">Total Amount</div>
+                            </div>
+                            <div class="history-summary-card">
+                                <div class="value" id="avgApprovalTime">0 days</div>
+                                <div class="label">Avg. Approval Time</div>
+                            </div>
+                            <div class="history-summary-card">
+                                <div class="value" id="successRate">0%</div>
+                                <div class="label">Approval Rate</div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-scroll-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ref No.</th>
+                                        <th>Vote Number</th>
+                                        <th>Job Description</th>
+                                        <th>Requested Amount</th>
+                                        <th>Approved Amount</th>
+                                        <th>Status</th>
+                                        <th>Submitted Date</th>
+                                        <th>Approved Date</th>
+                                        <th>Approved By</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- History data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination">
+                            <button id="historyPrevPage" disabled>Previous</button>
+                            <span class="pagination-info" id="historyPageInfo">Page 1 of 1</span>
+                            <button id="historyNextPage" disabled>Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vote Distribution Tab -->
+                <div id="voteDistributionTab" class="user-tab-content hidden">
+                    <div class="vote-distribution">
+                        <h2 class="section-title">Vote-wise Allocation Distribution</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="distributionYearFilter">Select Year</label>
+                            <select id="distributionYearFilter" class="form-control">
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+                        
+                        <div class="vote-distribution-chart">
+                            <canvas id="voteDistributionChart"></canvas>
+                        </div>
+                        
+                        <div class="vote-distribution-table">
+                            <div class="table-scroll-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Vote Number</th>
+                                            <th>Total Requests</th>
+                                            <th>Approved Requests</th>
+                                            <th>Total Requested</th>
+                                            <th>Total Approved</th>
+                                            <th>Approval Rate</th>
+                                            <th>Avg. Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="voteDistributionTableBody">
+                                        <!-- Vote distribution data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group mt-20">
+                            <button id="exportVoteDistribution" class="btn">Export to Excel</button>
+                            <button id="printVoteDistribution" class="btn btn-secondary">Print Report</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1600,6 +1982,9 @@
                         <span id="pendingAllocationBadge" class="notification-badge hidden">0</span>
                     </div>
                     <div class="admin-tab" data-tab="allocations">Allocation Status</div>
+                    <div class="admin-tab" data-tab="allocationHistory">Allocation History</div>
+                    <div class="admin-tab" data-tab="voteDistribution">Vote Distribution</div>
+                    <div class="admin-tab" data-tab="hospitalSummary">Hospital Summary</div>
                     <div class="admin-tab" data-tab="reports">Reports</div>
                     <div class="admin-tab" data-tab="logs">System Logs</div>
                 </div>
@@ -1662,6 +2047,16 @@
                 <!-- Allocation Status Tab -->
                 <div id="allocationsTab" class="admin-tab-content hidden">
                     <div class="admin-controls">
+                        <div class="filter-control">
+                            <label class="form-label" for="statusFilterAllocations">Filter by Status</label>
+                            <select id="statusFilterAllocations" class="form-control">
+                                <option value="all">All Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
                         <div class="search-control filter-control">
                             <label class="form-label" for="searchAllocationsStatus">Search Allocations</label>
                             <div class="search-container">
@@ -1700,6 +2095,196 @@
                             <div class="selection-list" id="rejectedAllocationsList">
                                 <!-- Rejected allocations will be populated here -->
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Allocation History Tab -->
+                <div id="allocationHistoryTab" class="admin-tab-content hidden">
+                    <div class="allocation-history">
+                        <h2 class="section-title">Allocation History</h2>
+                        
+                        <div class="history-filter">
+                            <div class="form-group">
+                                <label class="form-label" for="adminHistoryYearFilter">Year</label>
+                                <select id="adminHistoryYearFilter" class="form-control">
+                                    <option value="all">All Years</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="adminHistoryHospitalFilter">Hospital</label>
+                                <select id="adminHistoryHospitalFilter" class="form-control">
+                                    <option value="all">All Hospitals</option>
+                                    <!-- Hospital options will be populated dynamically -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="adminHistoryStatusFilter">Status</label>
+                                <select id="adminHistoryStatusFilter" class="form-control">
+                                    <option value="all">All Status</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="history-summary">
+                            <div class="history-summary-card">
+                                <div class="value" id="adminTotalHistoricalRequests">0</div>
+                                <div class="label">Total Requests</div>
+                            </div>
+                            <div class="history-summary-card">
+                                <div class="value" id="adminTotalHistoricalAmount">LKR 0</div>
+                                <div class="label">Total Amount</div>
+                            </div>
+                            <div class="history-summary-card">
+                                <div class="value" id="adminAvgApprovalTime">0 days</div>
+                                <div class="label">Avg. Approval Time</div>
+                            </div>
+                            <div class="history-summary-card">
+                                <div class="value" id="adminSuccessRate">0%</div>
+                                <div class="label">Approval Rate</div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-scroll-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ref No.</th>
+                                        <th>Hospital</th>
+                                        <th>Vote Number</th>
+                                        <th>Job Description</th>
+                                        <th>Requested Amount</th>
+                                        <th>Approved Amount</th>
+                                        <th>Status</th>
+                                        <th>Submitted Date</th>
+                                        <th>Approved Date</th>
+                                        <th>Approved By</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminHistoryTableBody">
+                                    <!-- History data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination">
+                            <button id="adminHistoryPrevPage" disabled>Previous</button>
+                            <span class="pagination-info" id="adminHistoryPageInfo">Page 1 of 1</span>
+                            <button id="adminHistoryNextPage" disabled>Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vote Distribution Tab -->
+                <div id="voteDistributionTab" class="admin-tab-content hidden">
+                    <div class="vote-distribution">
+                        <h2 class="section-title">Vote-wise Allocation Distribution</h2>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="adminDistributionYearFilter">Select Year</label>
+                            <select id="adminDistributionYearFilter" class="form-control">
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                            </select>
+                        </div>
+                        
+                        <div class="vote-distribution-chart">
+                            <canvas id="adminVoteDistributionChart"></canvas>
+                        </div>
+                        
+                        <div class="vote-distribution-table">
+                            <div class="table-scroll-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Vote Number</th>
+                                            <th>Total Requests</th>
+                                            <th>Approved Requests</th>
+                                            <th>Total Requested</th>
+                                            <th>Total Approved</th>
+                                            <th>Approval Rate</th>
+                                            <th>Avg. Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminVoteDistributionTableBody">
+                                        <!-- Vote distribution data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group mt-20">
+                            <button id="exportAdminVoteDistribution" class="btn">Export to Excel</button>
+                            <button id="printAdminVoteDistribution" class="btn btn-secondary">Print Report</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospital Summary Tab -->
+                <div id="hospitalSummaryTab" class="admin-tab-content hidden">
+                    <div class="allocation-history">
+                        <h2 class="section-title">Hospital-wise Allocation Summary</h2>
+                        
+                        <div class="history-filter">
+                            <div class="form-group">
+                                <label class="form-label" for="hospitalSummaryYearFilter">Year</label>
+                                <select id="hospitalSummaryYearFilter" class="form-control">
+                                    <option value="all">All Years</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="hospitalSummaryStatusFilter">Status</label>
+                                <select id="hospitalSummaryStatusFilter" class="form-control">
+                                    <option value="all">All Status</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="hospital-summary-grid" id="hospitalSummaryGrid">
+                            <!-- Hospital summary cards will be populated here -->
+                        </div>
+                        
+                        <div class="table-scroll-container mt-20">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Hospital</th>
+                                        <th>Total Requests</th>
+                                        <th>Pending</th>
+                                        <th>Approved</th>
+                                        <th>Rejected</th>
+                                        <th>Total Requested</th>
+                                        <th>Total Approved</th>
+                                        <th>Approval Rate</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hospitalSummaryTableBody">
+                                    <!-- Hospital summary data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="button-group mt-20">
+                            <button id="exportHospitalSummary" class="btn">Export to Excel</button>
+                            <button id="printHospitalSummary" class="btn btn-secondary">Print Report</button>
                         </div>
                     </div>
                 </div>
@@ -1880,7 +2465,7 @@
                     <div class="form-col">
                         <div class="form-group">
                             <label class="form-label" for="editHospitalName">Hospital Name</label>
-                            <input type="text" id="editHospitalName" class="form-control">
+                            <input type="text" id="editHospitalName" class="form-control readonly" readonly>
                         </div>
                     </div>
                     <div class="form-col">
@@ -2037,21 +2622,34 @@
                             <div class="enhanced-pdf-value" id="viewApprovalNotes"></div>
                         </div>
                     </div>
+
                     <div class="signature-section">
-                        <div class="signature-line"></div>
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div class="signature-label">Approval Signature:</div>
-                                <div class="signature-name">H.M.N Dinipriya Herath</div>
-                                <div class="signature-title">Deputy Director General (Logistics)</div>
-                                <div class="signature-title">For Secretary</div>
-                            </div>
-                            <div>
-                                <div class="signature-label">Approval Signature:</div>
-                                <div class="signature-name">Director Building Branch</div>
-                                <div class="signature-title">Director Building Branch (Administration)</div>
-                            </div>
+                        <!-- DDG Only Signature (shown when approved by DDG) -->
+                        <div class="signature-ddgonly" id="ddgSignatureSection">
+                            <div class="signature-line"></div>
+                            <div class="signature-label">Approval Signature:</div>
+                            <div class="signature-name">H.M.N Dinipriya Herath</div>
+                            <div class="signature-title">Deputy Director General (Logistics)</div>
+                            <div class="signature-title">For Secretary</div>
                         </div>
+                        
+                        <!-- Director Only Signature (shown when approved by Director) -->
+                        <div class="signature-directoronly" id="directorSignatureSection">
+                            <div class="signature-line"></div>
+                            <div class="signature-label">Approval Signature:</div>
+                            <div class="signature-name">Director Building Branch</div>
+                            <div class="signature-title">Director Building Branch (Administration)</div>
+                        </div>
+                        
+                        <!-- Hospital Section Signature -->
+                        <div class="hospital-signature-section">
+                            <div class="signature-line"></div>
+                            <div class="signature-label">Hospital Authorization:</div>
+                            <div class="signature-name" id="hospitalSignatureName">[Hospital Director/Deputy Director General]</div>
+                            <div class="signature-title" id="hospitalSignatureTitle">[Position]</div>
+                            <div class="signature-title" id="hospitalSignatureInstitution">[Hospital Name]</div>
+                        </div>
+                        
                         <div class="mt-20">
                             <div class="signature-label">Copies:</div>
                             <div class="signature-title">1. Accountant (Budget - Control) - For kind information and necessary action (f.k.i. & n.a.)</div>
@@ -2119,6 +2717,65 @@
             <div class="modal-footer">
                 <button id="cancelAdminPassword" class="btn btn-danger">Cancel</button>
                 <button id="confirmAdminPassword" class="btn">Authenticate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hospital History Modal -->
+    <div id="hospitalHistoryModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Hospital Allocation History</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <h4 id="hospitalHistoryTitle" style="margin-bottom: 15px;"></h4>
+                </div>
+                
+                <div class="history-summary">
+                    <div class="history-summary-card">
+                        <div class="value" id="hospitalHistoryTotalRequests">0</div>
+                        <div class="label">Total Requests</div>
+                    </div>
+                    <div class="history-summary-card">
+                        <div class="value" id="hospitalHistoryTotalAmount">LKR 0</div>
+                        <div class="label">Total Amount</div>
+                    </div>
+                    <div class="history-summary-card">
+                        <div class="value" id="hospitalHistoryApprovedCount">0</div>
+                        <div class="label">Approved</div>
+                    </div>
+                    <div class="history-summary-card">
+                        <div class="value" id="hospitalHistoryApprovalRate">0%</div>
+                        <div class="label">Approval Rate</div>
+                    </div>
+                </div>
+                
+                <div class="table-scroll-container" style="max-height: 400px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ref No.</th>
+                                <th>Vote Number</th>
+                                <th>Job Description</th>
+                                <th>Requested Amount</th>
+                                <th>Approved Amount</th>
+                                <th>Status</th>
+                                <th>Submitted Date</th>
+                                <th>Approved Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hospitalHistoryTableBody">
+                            <!-- Hospital history data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeHospitalHistory" class="btn">Close</button>
+                <button id="exportHospitalHistory" class="btn btn-secondary">Export History</button>
             </div>
         </div>
     </div>
@@ -2230,6 +2887,80 @@
         const adminAccounts = {
             'ddg_logistics': { name: 'Deputy Director General (Logistics)', password: 'ddg123' },
             'director_building': { name: 'Director Building (Administration)', password: 'dba123' }
+        };
+
+        // Hospital Signatories Database
+        const hospitalSignatories = {
+            'National Hospital Sri Lanka': { 
+                name: 'Dr. K. R. Fernando', 
+                title: 'Director',
+                institution: 'National Hospital Sri Lanka'
+            },
+            'Colombo South Teaching Hospital': { 
+                name: 'Dr. S. M. Perera', 
+                title: 'Deputy Director General',
+                institution: 'Colombo South Teaching Hospital'
+            },
+            'Lady Ridgeway Hospital': { 
+                name: 'Dr. M. A. Silva', 
+                title: 'Director',
+                institution: 'Lady Ridgeway Hospital'
+            },
+            'Apeksha Hospital Maharagama': { 
+                name: 'Dr. L. R. De Silva', 
+                title: 'Director',
+                institution: 'Apeksha Hospital Maharagama'
+            },
+            'Colombo East Base Hospital Mulleriyawa': { 
+                name: 'Dr. J. K. Rajapakse', 
+                title: 'Director',
+                institution: 'Colombo East Base Hospital Mulleriyawa'
+            },
+            'National Hospital - Kandy': { 
+                name: 'Dr. W. M. Bandara', 
+                title: 'Director',
+                institution: 'National Hospital - Kandy'
+            },
+            'National Hospital - Galle (Karapitiya)': { 
+                name: 'Dr. H. G. Premaratne', 
+                title: 'Director',
+                institution: 'National Hospital - Galle'
+            },
+            'Teaching Hospital Kurunegala': { 
+                name: 'Dr. R. S. Wijesinghe', 
+                title: 'Director',
+                institution: 'Teaching Hospital Kurunegala'
+            },
+            'TH Anuradhapura': { 
+                name: 'Dr. P. T. Abeyrathne', 
+                title: 'Director',
+                institution: 'Teaching Hospital Anuradhapura'
+            },
+            'Teaching Hospital Batticaloa': { 
+                name: 'Dr. M. R. Ismail', 
+                title: 'Director',
+                institution: 'Teaching Hospital Batticaloa'
+            },
+            'TH Jaffna': { 
+                name: 'Dr. K. S. Krishnan', 
+                title: 'Director',
+                institution: 'Teaching Hospital Jaffna'
+            },
+            'Teaching Hospital Ratnapura': { 
+                name: 'Dr. S. P. Gunaratne', 
+                title: 'Director',
+                institution: 'Teaching Hospital Ratnapura'
+            },
+            'TH Badulla': { 
+                name: 'Dr. N. S. Dissanayake', 
+                title: 'Director',
+                institution: 'Teaching Hospital Badulla'
+            },
+            'Ministry of Health': { 
+                name: 'H.M.N Dinipriya Herath', 
+                title: 'Deputy Director General (Logistics)',
+                institution: 'Ministry of Health'
+            }
         };
 
         // Initialize localStorage if not exists
@@ -2405,7 +3136,8 @@
                         rejectionreason: '',
                         timestamp: new Date().toISOString(),
                         uniquepassword: uniquePassword,
-                        hospitalId: data.hospitalId
+                        hospitalId: data.hospitalId,
+                        approvaldate: null
                     };
                     
                     let allocations = JSON.parse(localStorage.getItem('allocations') || '[]');
@@ -2450,6 +3182,7 @@
                     allAllocationsData[allocationIndex].approvingauthority = data.approvingAuthority;
                     allAllocationsData[allocationIndex].approvalnotes = data.approvalNotes || '';
                     allAllocationsData[allocationIndex].status = 'Approved';
+                    allAllocationsData[allocationIndex].approvaldate = new Date().toISOString();
                     
                     localStorage.setItem('allocations', JSON.stringify(allAllocationsData));
                     
@@ -2721,6 +3454,8 @@
                         currentUserId = hospitalId;
                         showElement(document.getElementById('hospitalDashboard'));
                         document.getElementById('hospitalDisplayName').textContent = result.hospitalName || 'Hospital User';
+                        // Set hospital name in allocation form
+                        document.getElementById('hospitalName').value = result.hospitalName || hospitalId;
                         resetAllocationForm();
                         loadMyRequests();
                         updateUserAllocationStatus();
@@ -2730,6 +3465,9 @@
                             result.role === 'mainadmin' ? 'Main Administrator' : result.userName || 'Administrator';
                         loadAdminData();
                         loadSystemLogs();
+                        loadAdminAllocationHistory();
+                        loadAdminVoteDistribution();
+                        loadHospitalSummary();
                     }
                 } else {
                     showMessage(result.error || 'Invalid password');
@@ -2806,6 +3544,9 @@
                     
                     if (document.getElementById('adminDashboard').style.display === 'block') {
                         loadAdminData();
+                        loadAdminAllocationHistory();
+                        loadAdminVoteDistribution();
+                        loadHospitalSummary();
                     }
                     
                     loadMyRequests();
@@ -2837,11 +3578,14 @@
         }
 
         function resetAllocationForm() {
-            const fields = ['hospitalName', 'contactPerson', 'contactPhone', 'contactEmail', 'voteNumber', 'jobDescription', 'requiredAmount', 'priorityLevel', 'requiredDate', 'additionalNotes'];
+            const fields = ['contactPerson', 'contactPhone', 'contactEmail', 'voteNumber', 'jobDescription', 'requiredAmount', 'priorityLevel', 'requiredDate', 'additionalNotes'];
             fields.forEach(id => {
                 const field = document.getElementById(id);
                 if (field) field.value = '';
             });
+            
+            // Set hospital name to logged in hospital
+            document.getElementById('hospitalName').value = currentUserId;
             
             showElement(document.getElementById('allocationForm'));
             showElement(document.getElementById('allocationSuccess'), false);
@@ -2968,11 +3712,47 @@
                 document.getElementById('viewApprovingAuthority').textContent = allocation.approvingauthority || 'Not specified';
                 document.getElementById('viewApprovalNotes').textContent = allocation.approvalnotes || 'No approval notes';
                 
+                // Update PDF signature based on approving authority
+                updatePdfSignature(allocation);
+                
+                // Update hospital signature
+                updateHospitalSignature(allocation);
+                
                 showElement(document.getElementById('viewModal'));
             } else {
                 console.error('Allocation not found:', requestId);
                 alert('Allocation details not found. Please try again.');
             }
+        }
+
+        // Update PDF signature based on approving authority
+        function updatePdfSignature(allocation) {
+            const ddgSignature = document.getElementById('ddgSignatureSection');
+            const directorSignature = document.getElementById('directorSignatureSection');
+            
+            // Hide both signatures first
+            if (ddgSignature) ddgSignature.style.display = 'none';
+            if (directorSignature) directorSignature.style.display = 'none';
+            
+            // Show appropriate signature based on approving authority
+            if (allocation.approvingauthority === 'Deputy Director General (Logistics)') {
+                if (ddgSignature) ddgSignature.style.display = 'block';
+            } else if (allocation.approvingauthority === 'Director Building (Administration)') {
+                if (directorSignature) directorSignature.style.display = 'block';
+            }
+        }
+
+        // Update hospital signature in view modal
+        function updateHospitalSignature(allocation) {
+            const signatory = hospitalSignatories[allocation.hospitalname] || {
+                name: '[Hospital Director/Deputy Director General]',
+                title: '[Position]',
+                institution: allocation.hospitalname
+            };
+            
+            document.getElementById('hospitalSignatureName').textContent = signatory.name;
+            document.getElementById('hospitalSignatureTitle').textContent = signatory.title;
+            document.getElementById('hospitalSignatureInstitution').textContent = signatory.institution;
         }
 
         // Hospital Allocation Status Functions
@@ -3034,6 +3814,294 @@
                 `;
                 userAllocationsList.appendChild(tr);
             });
+        }
+
+        // Hospital Allocation History Functions
+        async function loadAllocationHistory() {
+            try {
+                const allocationsResult = await callGoogleAppsScript('getAllocations');
+                const myAllocations = allocationsResult.allocations.filter(allocation => allocation.hospitalId === currentUserId) || [];
+                
+                // Populate vote filter
+                populateVoteFilter(myAllocations);
+                
+                // Filter and display history
+                filterAllocationHistory(myAllocations);
+            } catch (error) {
+                console.error('Error loading allocation history:', error);
+            }
+        }
+
+        function populateVoteFilter(allocations) {
+            const voteFilter = document.getElementById('historyVoteFilter');
+            voteFilter.innerHTML = '<option value="all">All Votes</option>';
+            
+            // Get unique vote numbers
+            const uniqueVotes = [...new Set(allocations.map(allocation => allocation.votenumber).filter(Boolean))];
+            
+            uniqueVotes.forEach(vote => {
+                const option = document.createElement('option');
+                option.value = vote;
+                option.textContent = vote;
+                voteFilter.appendChild(option);
+            });
+        }
+
+        function filterAllocationHistory(myAllocations) {
+            const yearFilter = document.getElementById('historyYearFilter').value;
+            const voteFilter = document.getElementById('historyVoteFilter').value;
+            const statusFilter = document.getElementById('historyStatusFilter').value;
+            
+            let filteredHistory = myAllocations;
+            
+            // Filter by year
+            if (yearFilter !== 'all') {
+                filteredHistory = filteredHistory.filter(allocation => {
+                    const allocationYear = new Date(allocation.timestamp).getFullYear().toString();
+                    return allocationYear === yearFilter;
+                });
+            }
+            
+            // Filter by vote number
+            if (voteFilter !== 'all') {
+                filteredHistory = filteredHistory.filter(allocation => allocation.votenumber === voteFilter);
+            }
+            
+            // Filter by status
+            if (statusFilter !== 'all') {
+                filteredHistory = filteredHistory.filter(allocation => allocation.status === statusFilter);
+            }
+            
+            // Sort by date (newest first)
+            filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            displayAllocationHistory(filteredHistory);
+            updateHistorySummary(filteredHistory);
+        }
+
+        function displayAllocationHistory(allocations) {
+            const historyTableBody = document.getElementById('historyTableBody');
+            historyTableBody.innerHTML = '';
+            
+            if (allocations.length === 0) {
+                historyTableBody.innerHTML = '<tr><td colspan="10" class="text-center">No historical allocation data found</td></tr>';
+                return;
+            }
+            
+            allocations.forEach(allocation => {
+                const tr = document.createElement('tr');
+                const statusClass = `status-${allocation.status.toLowerCase()}`;
+                
+                // Calculate approval time
+                let approvalTime = 'N/A';
+                if (allocation.status === 'Approved' && allocation.timestamp && allocation.approvaldate) {
+                    const submitDate = new Date(allocation.timestamp);
+                    const approveDate = new Date(allocation.approvaldate);
+                    const diffTime = Math.abs(approveDate - submitDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    approvalTime = `${diffDays} days`;
+                }
+                
+                tr.innerHTML = `
+                    <td>${allocation.refnumber}</td>
+                    <td>${allocation.votenumber}</td>
+                    <td>${allocation.jobdescription.substring(0, 40)}${allocation.jobdescription.length > 40 ? '...' : ''}</td>
+                    <td>${formatCurrency(allocation.requiredamount)}</td>
+                    <td>${allocation.approvedamount > 0 ? formatCurrency(allocation.approvedamount) : 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${allocation.status}</span></td>
+                    <td>${formatDate(allocation.timestamp)}</td>
+                    <td>${allocation.approvaldate ? formatDate(allocation.approvaldate) : 'N/A'}</td>
+                    <td>${allocation.approvingauthority || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn btn" onclick="viewMyAllocation(${allocation.id})">View</button>
+                    </td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+        }
+
+        function updateHistorySummary(allocations) {
+            const totalRequests = allocations.length;
+            const totalAmount = allocations.reduce((sum, allocation) => sum + parseFloat(allocation.requiredamount), 0);
+            const approvedRequests = allocations.filter(a => a.status === 'Approved').length;
+            const successRate = totalRequests > 0 ? Math.round((approvedRequests / totalRequests) * 100) : 0;
+            
+            // Calculate average approval time
+            let totalApprovalDays = 0;
+            let approvedCount = 0;
+            
+            allocations.forEach(allocation => {
+                if (allocation.status === 'Approved' && allocation.timestamp && allocation.approvaldate) {
+                    const submitDate = new Date(allocation.timestamp);
+                    const approveDate = new Date(allocation.approvaldate);
+                    const diffTime = Math.abs(approveDate - submitDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    totalApprovalDays += diffDays;
+                    approvedCount++;
+                }
+            });
+            
+            const avgApprovalTime = approvedCount > 0 ? Math.round(totalApprovalDays / approvedCount) : 0;
+            
+            // Update summary cards
+            document.getElementById('totalHistoricalRequests').textContent = totalRequests;
+            document.getElementById('totalHistoricalAmount').textContent = formatCurrency(totalAmount);
+            document.getElementById('avgApprovalTime').textContent = `${avgApprovalTime} days`;
+            document.getElementById('successRate').textContent = `${successRate}%`;
+        }
+
+        // Vote Distribution Functions
+        async function loadVoteDistribution() {
+            try {
+                const allocationsResult = await callGoogleAppsScript('getAllocations');
+                const myAllocations = allocationsResult.allocations.filter(allocation => allocation.hospitalId === currentUserId) || [];
+                
+                const yearFilter = document.getElementById('distributionYearFilter').value;
+                
+                // Filter by year
+                const filteredAllocations = myAllocations.filter(allocation => {
+                    const allocationYear = new Date(allocation.timestamp).getFullYear().toString();
+                    return allocationYear === yearFilter;
+                });
+                
+                calculateVoteDistribution(filteredAllocations);
+            } catch (error) {
+                console.error('Error loading vote distribution:', error);
+            }
+        }
+
+        function calculateVoteDistribution(allocations) {
+            const voteData = {};
+            
+            // Group allocations by vote number
+            allocations.forEach(allocation => {
+                const voteNumber = allocation.votenumber || 'Unknown';
+                
+                if (!voteData[voteNumber]) {
+                    voteData[voteNumber] = {
+                        totalRequests: 0,
+                        approvedRequests: 0,
+                        totalRequested: 0,
+                        totalApproved: 0,
+                        allocations: []
+                    };
+                }
+                
+                voteData[voteNumber].totalRequests++;
+                voteData[voteNumber].totalRequested += parseFloat(allocation.requiredamount);
+                
+                if (allocation.status === 'Approved') {
+                    voteData[voteNumber].approvedRequests++;
+                    voteData[voteNumber].totalApproved += parseFloat(allocation.approvedamount || allocation.requiredamount);
+                }
+                
+                voteData[voteNumber].allocations.push(allocation);
+            });
+            
+            displayVoteDistribution(voteData);
+            updateVoteDistributionChart(voteData);
+        }
+
+        function displayVoteDistribution(voteData) {
+            const tableBody = document.getElementById('voteDistributionTableBody');
+            tableBody.innerHTML = '';
+            
+            if (Object.keys(voteData).length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No vote distribution data available</td></tr>';
+                return;
+            }
+            
+            Object.keys(voteData).forEach(voteNumber => {
+                const data = voteData[voteNumber];
+                const approvalRate = data.totalRequests > 0 ? Math.round((data.approvedRequests / data.totalRequests) * 100) : 0;
+                const avgAmount = data.totalRequests > 0 ? data.totalRequested / data.totalRequests : 0;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${voteNumber}</td>
+                    <td>${data.totalRequests}</td>
+                    <td>${data.approvedRequests}</td>
+                    <td>${formatCurrency(data.totalRequested)}</td>
+                    <td>${formatCurrency(data.totalApproved)}</td>
+                    <td>${approvalRate}%</td>
+                    <td>${formatCurrency(avgAmount)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateVoteDistributionChart(voteData) {
+            const ctx = document.getElementById('voteDistributionChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.voteDistributionChartInstance) {
+                window.voteDistributionChartInstance.destroy();
+            }
+            
+            const voteNumbers = Object.keys(voteData);
+            const totalAmounts = voteNumbers.map(vote => voteData[vote].totalRequested);
+            
+            window.voteDistributionChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: voteNumbers,
+                    datasets: [{
+                        label: 'Total Requested Amount (LKR)',
+                        data: totalAmounts,
+                        backgroundColor: 'rgba(26, 115, 232, 0.7)',
+                        borderColor: 'rgba(26, 115, 232, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Total Approved Amount (LKR)',
+                        data: voteNumbers.map(vote => voteData[vote].totalApproved),
+                        backgroundColor: 'rgba(52, 168, 83, 0.7)',
+                        borderColor: 'rgba(52, 168, 83, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount (LKR)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Vote Number'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Export vote distribution to Excel
+        function exportVoteDistributionToExcel() {
+            const yearFilter = document.getElementById('distributionYearFilter').value;
+            const hospitalName = currentUserId || 'Hospital';
+            
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Vote Number,Total Requests,Approved Requests,Total Requested,Total Approved,Approval Rate,Average Amount\n"
+                + Array.from(document.querySelectorAll('#voteDistributionTableBody tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return Array.from(cells).map(cell => `"${cell.textContent}"`).join(',');
+                }).join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', `vote_distribution_${hospitalName}_${yearFilter}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            logSystemActivity('report', currentUserId, 'Vote Distribution Exported', `Year: ${yearFilter}`);
         }
 
         // Admin Functions
@@ -3139,12 +4207,14 @@
                         <button class="action-btn btn" onclick="openApprovalModal(${allocation.id})">Approve</button>
                         <button class="action-btn btn btn-danger" onclick="openRejectionModal(${allocation.id})">Reject</button>
                         <button class="action-btn btn btn-secondary" onclick="authenticateAdmin('edit', ${allocation.id})">Edit</button>
+                        <button class="action-btn btn btn-warning" onclick="viewHospitalHistory('${allocation.hospitalname}')">View Hospital History</button>
                         <button class="action-btn btn btn-danger" onclick="authenticateAdmin('delete', ${allocation.id})">Delete</button>
                     `;
                 } else {
                     actions = `
                         <button class="action-btn btn" onclick="viewAllocation(${allocation.id})">View</button>
                         <button class="action-btn btn btn-secondary" onclick="authenticateAdmin('edit', ${allocation.id})">Edit</button>
+                        <button class="action-btn btn btn-warning" onclick="viewHospitalHistory('${allocation.hospitalname}')">View Hospital History</button>
                     `;
                 }
 
@@ -3185,6 +4255,59 @@
                 displayAllocations();
                 updatePagination();
             }
+        }
+
+        // View Hospital History
+        function viewHospitalHistory(hospitalName) {
+            const hospitalAllocations = allAllocations.filter(allocation => allocation.hospitalname === hospitalName);
+            
+            if (hospitalAllocations.length === 0) {
+                alert(`No allocation history found for ${hospitalName}`);
+                return;
+            }
+            
+            // Update modal title
+            document.getElementById('hospitalHistoryTitle').textContent = `Allocation History for ${hospitalName}`;
+            
+            // Calculate summary
+            const totalRequests = hospitalAllocations.length;
+            const totalAmount = hospitalAllocations.reduce((sum, allocation) => sum + parseFloat(allocation.requiredamount), 0);
+            const approvedCount = hospitalAllocations.filter(a => a.status === 'Approved').length;
+            const approvalRate = totalRequests > 0 ? Math.round((approvedCount / totalRequests) * 100) : 0;
+            
+            // Update summary cards
+            document.getElementById('hospitalHistoryTotalRequests').textContent = totalRequests;
+            document.getElementById('hospitalHistoryTotalAmount').textContent = formatCurrency(totalAmount);
+            document.getElementById('hospitalHistoryApprovedCount').textContent = approvedCount;
+            document.getElementById('hospitalHistoryApprovalRate').textContent = `${approvalRate}%`;
+            
+            // Display history table
+            const historyTableBody = document.getElementById('hospitalHistoryTableBody');
+            historyTableBody.innerHTML = '';
+            
+            hospitalAllocations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            hospitalAllocations.forEach(allocation => {
+                const tr = document.createElement('tr');
+                const statusClass = `status-${allocation.status.toLowerCase()}`;
+                
+                tr.innerHTML = `
+                    <td>${allocation.refnumber}</td>
+                    <td>${allocation.votenumber}</td>
+                    <td>${allocation.jobdescription.substring(0, 40)}${allocation.jobdescription.length > 40 ? '...' : ''}</td>
+                    <td>${formatCurrency(allocation.requiredamount)}</td>
+                    <td>${allocation.approvedamount > 0 ? formatCurrency(allocation.approvedamount) : 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${allocation.status}</span></td>
+                    <td>${formatDate(allocation.timestamp)}</td>
+                    <td>${allocation.approvaldate ? formatDate(allocation.approvaldate) : 'N/A'}</td>
+                    <td>
+                        <button class="action-btn btn btn-sm" onclick="viewAllocation(${allocation.id})">View</button>
+                    </td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+            
+            showElement(document.getElementById('hospitalHistoryModal'));
         }
 
         // Modal Functions
@@ -3269,6 +4392,9 @@
                     alert('Allocation approved successfully');
                     hideModal('approvalModal');
                     loadAdminData();
+                    loadAdminAllocationHistory();
+                    loadAdminVoteDistribution();
+                    loadHospitalSummary();
                 } else {
                     alert('Approval failed: ' + (result.error || 'Unknown error'));
                 }
@@ -3307,6 +4433,9 @@
                     alert('Allocation rejected successfully');
                     hideModal('rejectionModal');
                     loadAdminData();
+                    loadAdminAllocationHistory();
+                    loadAdminVoteDistribution();
+                    loadHospitalSummary();
                 } else {
                     alert('Rejection failed: ' + (result.error || 'Unknown error'));
                 }
@@ -3358,6 +4487,12 @@
                 document.getElementById('viewApprovingAuthority').textContent = allocation.approvingauthority || 'Not specified';
                 document.getElementById('viewApprovalNotes').textContent = allocation.approvalnotes || 'No approval notes';
                 
+                // Update PDF signature based on approving authority
+                updatePdfSignature(allocation);
+                
+                // Update hospital signature
+                updateHospitalSignature(allocation);
+                
                 showElement(document.getElementById('viewModal'));
             }
         }
@@ -3385,6 +4520,9 @@
                     alert('Allocation updated successfully');
                     hideModal('editModal');
                     loadAdminData();
+                    loadAdminAllocationHistory();
+                    loadAdminVoteDistribution();
+                    loadHospitalSummary();
                 } else {
                     alert('Update failed: ' + (result.error || 'Unknown error'));
                 }
@@ -3406,6 +4544,9 @@
                 if (result.success) {
                     alert('Allocation deleted successfully');
                     loadAdminData();
+                    loadAdminAllocationHistory();
+                    loadAdminVoteDistribution();
+                    loadHospitalSummary();
                 } else {
                     alert('Delete failed: ' + (result.error || 'Unknown error'));
                 }
@@ -3483,6 +4624,472 @@
             displayAllocationList('pendingAllocationsList', pendingAllocations);
             displayAllocationList('approvedAllocationsList', approvedAllocations);
             displayAllocationList('rejectedAllocationsList', rejectedAllocations);
+        }
+
+        function displayAllocationList(elementId, allocations) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '';
+            
+            if (allocations.length === 0) {
+                element.innerHTML = '<div class="selection-item" style="text-align: center; color: #999;">No allocations found</div>';
+                return;
+            }
+            
+            allocations.forEach(allocation => {
+                const div = document.createElement('div');
+                div.className = 'selection-item';
+                div.innerHTML = `
+                    <div><strong>${allocation.refnumber}</strong> - ${allocation.hospitalname}</div>
+                    <div style="color: #666; font-size: 0.9em;">${allocation.votenumber} - ${formatCurrency(allocation.requiredamount)}</div>
+                `;
+                element.appendChild(div);
+            });
+        }
+
+        // Admin Allocation History Functions
+        async function loadAdminAllocationHistory() {
+            try {
+                const allocationsResult = await callGoogleAppsScript('getAllocations');
+                const allAllocationsData = allocationsResult.allocations || [];
+                
+                // Populate hospital filter
+                populateAdminHistoryHospitalFilter(allAllocationsData);
+                
+                // Filter and display history
+                filterAdminAllocationHistory(allAllocationsData);
+            } catch (error) {
+                console.error('Error loading admin allocation history:', error);
+            }
+        }
+
+        function populateAdminHistoryHospitalFilter(allocations) {
+            const hospitalFilter = document.getElementById('adminHistoryHospitalFilter');
+            hospitalFilter.innerHTML = '<option value="all">All Hospitals</option>';
+            
+            // Get unique hospital values
+            const uniqueHospitals = [...new Set(allocations.map(allocation => allocation.hospitalname).filter(Boolean))];
+            
+            uniqueHospitals.forEach(hospital => {
+                const option = document.createElement('option');
+                option.value = hospital;
+                option.textContent = hospital;
+                hospitalFilter.appendChild(option);
+            });
+        }
+
+        function filterAdminAllocationHistory(allocations) {
+            const yearFilter = document.getElementById('adminHistoryYearFilter').value;
+            const hospitalFilter = document.getElementById('adminHistoryHospitalFilter').value;
+            const statusFilter = document.getElementById('adminHistoryStatusFilter').value;
+            
+            let filteredHistory = allocations;
+            
+            // Filter by year
+            if (yearFilter !== 'all') {
+                filteredHistory = filteredHistory.filter(allocation => {
+                    const allocationYear = new Date(allocation.timestamp).getFullYear().toString();
+                    return allocationYear === yearFilter;
+                });
+            }
+            
+            // Filter by hospital
+            if (hospitalFilter !== 'all') {
+                filteredHistory = filteredHistory.filter(allocation => allocation.hospitalname === hospitalFilter);
+            }
+            
+            // Filter by status
+            if (statusFilter !== 'all') {
+                filteredHistory = filteredHistory.filter(allocation => allocation.status === statusFilter);
+            }
+            
+            // Sort by date (newest first)
+            filteredHistory.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            displayAdminAllocationHistory(filteredHistory);
+            updateAdminHistorySummary(filteredHistory);
+        }
+
+        function displayAdminAllocationHistory(allocations) {
+            const historyTableBody = document.getElementById('adminHistoryTableBody');
+            historyTableBody.innerHTML = '';
+            
+            if (allocations.length === 0) {
+                historyTableBody.innerHTML = '<tr><td colspan="11" class="text-center">No historical allocation data found</td></tr>';
+                return;
+            }
+            
+            allocations.forEach(allocation => {
+                const tr = document.createElement('tr');
+                const statusClass = `status-${allocation.status.toLowerCase()}`;
+                
+                // Calculate approval time
+                let approvalTime = 'N/A';
+                if (allocation.status === 'Approved' && allocation.timestamp && allocation.approvaldate) {
+                    const submitDate = new Date(allocation.timestamp);
+                    const approveDate = new Date(allocation.approvaldate);
+                    const diffTime = Math.abs(approveDate - submitDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    approvalTime = `${diffDays} days`;
+                }
+                
+                tr.innerHTML = `
+                    <td>${allocation.refnumber}</td>
+                    <td>${allocation.hospitalname}</td>
+                    <td>${allocation.votenumber}</td>
+                    <td>${allocation.jobdescription.substring(0, 40)}${allocation.jobdescription.length > 40 ? '...' : ''}</td>
+                    <td>${formatCurrency(allocation.requiredamount)}</td>
+                    <td>${allocation.approvedamount > 0 ? formatCurrency(allocation.approvedamount) : 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${allocation.status}</span></td>
+                    <td>${formatDate(allocation.timestamp)}</td>
+                    <td>${allocation.approvaldate ? formatDate(allocation.approvaldate) : 'N/A'}</td>
+                    <td>${allocation.approvingauthority || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn btn" onclick="viewAllocation(${allocation.id})">View</button>
+                        <button class="action-btn btn btn-warning" onclick="viewHospitalHistory('${allocation.hospitalname}')">Hospital History</button>
+                    </td>
+                `;
+                historyTableBody.appendChild(tr);
+            });
+        }
+
+        function updateAdminHistorySummary(allocations) {
+            const totalRequests = allocations.length;
+            const totalAmount = allocations.reduce((sum, allocation) => sum + parseFloat(allocation.requiredamount), 0);
+            const approvedRequests = allocations.filter(a => a.status === 'Approved').length;
+            const successRate = totalRequests > 0 ? Math.round((approvedRequests / totalRequests) * 100) : 0;
+            
+            // Calculate average approval time
+            let totalApprovalDays = 0;
+            let approvedCount = 0;
+            
+            allocations.forEach(allocation => {
+                if (allocation.status === 'Approved' && allocation.timestamp && allocation.approvaldate) {
+                    const submitDate = new Date(allocation.timestamp);
+                    const approveDate = new Date(allocation.approvaldate);
+                    const diffTime = Math.abs(approveDate - submitDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    totalApprovalDays += diffDays;
+                    approvedCount++;
+                }
+            });
+            
+            const avgApprovalTime = approvedCount > 0 ? Math.round(totalApprovalDays / approvedCount) : 0;
+            
+            // Update summary cards
+            document.getElementById('adminTotalHistoricalRequests').textContent = totalRequests;
+            document.getElementById('adminTotalHistoricalAmount').textContent = formatCurrency(totalAmount);
+            document.getElementById('adminAvgApprovalTime').textContent = `${avgApprovalTime} days`;
+            document.getElementById('adminSuccessRate').textContent = `${successRate}%`;
+        }
+
+        // Admin Vote Distribution Functions
+        async function loadAdminVoteDistribution() {
+            try {
+                const allocationsResult = await callGoogleAppsScript('getAllocations');
+                const allAllocationsData = allocationsResult.allocations || [];
+                
+                const yearFilter = document.getElementById('adminDistributionYearFilter').value;
+                
+                // Filter by year
+                const filteredAllocations = allAllocationsData.filter(allocation => {
+                    const allocationYear = new Date(allocation.timestamp).getFullYear().toString();
+                    return allocationYear === yearFilter;
+                });
+                
+                calculateAdminVoteDistribution(filteredAllocations);
+            } catch (error) {
+                console.error('Error loading admin vote distribution:', error);
+            }
+        }
+
+        function calculateAdminVoteDistribution(allocations) {
+            const voteData = {};
+            
+            // Group allocations by vote number
+            allocations.forEach(allocation => {
+                const voteNumber = allocation.votenumber || 'Unknown';
+                
+                if (!voteData[voteNumber]) {
+                    voteData[voteNumber] = {
+                        totalRequests: 0,
+                        approvedRequests: 0,
+                        totalRequested: 0,
+                        totalApproved: 0,
+                        allocations: []
+                    };
+                }
+                
+                voteData[voteNumber].totalRequests++;
+                voteData[voteNumber].totalRequested += parseFloat(allocation.requiredamount);
+                
+                if (allocation.status === 'Approved') {
+                    voteData[voteNumber].approvedRequests++;
+                    voteData[voteNumber].totalApproved += parseFloat(allocation.approvedamount || allocation.requiredamount);
+                }
+                
+                voteData[voteNumber].allocations.push(allocation);
+            });
+            
+            displayAdminVoteDistribution(voteData);
+            updateAdminVoteDistributionChart(voteData);
+        }
+
+        function displayAdminVoteDistribution(voteData) {
+            const tableBody = document.getElementById('adminVoteDistributionTableBody');
+            tableBody.innerHTML = '';
+            
+            if (Object.keys(voteData).length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No vote distribution data available</td></tr>';
+                return;
+            }
+            
+            Object.keys(voteData).forEach(voteNumber => {
+                const data = voteData[voteNumber];
+                const approvalRate = data.totalRequests > 0 ? Math.round((data.approvedRequests / data.totalRequests) * 100) : 0;
+                const avgAmount = data.totalRequests > 0 ? data.totalRequested / data.totalRequests : 0;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${voteNumber}</td>
+                    <td>${data.totalRequests}</td>
+                    <td>${data.approvedRequests}</td>
+                    <td>${formatCurrency(data.totalRequested)}</td>
+                    <td>${formatCurrency(data.totalApproved)}</td>
+                    <td>${approvalRate}%</td>
+                    <td>${formatCurrency(avgAmount)}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateAdminVoteDistributionChart(voteData) {
+            const ctx = document.getElementById('adminVoteDistributionChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.adminVoteDistributionChartInstance) {
+                window.adminVoteDistributionChartInstance.destroy();
+            }
+            
+            const voteNumbers = Object.keys(voteData);
+            const totalAmounts = voteNumbers.map(vote => voteData[vote].totalRequested);
+            
+            window.adminVoteDistributionChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: voteNumbers,
+                    datasets: [{
+                        label: 'Total Requested Amount (LKR)',
+                        data: totalAmounts,
+                        backgroundColor: 'rgba(26, 115, 232, 0.7)',
+                        borderColor: 'rgba(26, 115, 232, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Total Approved Amount (LKR)',
+                        data: voteNumbers.map(vote => voteData[vote].totalApproved),
+                        backgroundColor: 'rgba(52, 168, 83, 0.7)',
+                        borderColor: 'rgba(52, 168, 83, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount (LKR)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Vote Number'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Export admin vote distribution to Excel
+        function exportAdminVoteDistributionToExcel() {
+            const yearFilter = document.getElementById('adminDistributionYearFilter').value;
+            
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Vote Number,Total Requests,Approved Requests,Total Requested,Total Approved,Approval Rate,Average Amount\n"
+                + Array.from(document.querySelectorAll('#adminVoteDistributionTableBody tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return Array.from(cells).map(cell => `"${cell.textContent}"`).join(',');
+                }).join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', `vote_distribution_admin_${yearFilter}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            logSystemActivity('report', 'Administrator', 'Vote Distribution Exported', `Year: ${yearFilter}`);
+        }
+
+        // Hospital Summary Functions
+        async function loadHospitalSummary() {
+            try {
+                const allocationsResult = await callGoogleAppsScript('getAllocations');
+                const allAllocationsData = allocationsResult.allocations || [];
+                
+                filterHospitalSummary(allAllocationsData);
+            } catch (error) {
+                console.error('Error loading hospital summary:', error);
+            }
+        }
+
+        function filterHospitalSummary(allocations) {
+            const yearFilter = document.getElementById('hospitalSummaryYearFilter').value;
+            const statusFilter = document.getElementById('hospitalSummaryStatusFilter').value;
+            
+            let filteredAllocations = allocations;
+            
+            // Filter by year
+            if (yearFilter !== 'all') {
+                filteredAllocations = filteredAllocations.filter(allocation => {
+                    const allocationYear = new Date(allocation.timestamp).getFullYear().toString();
+                    return allocationYear === yearFilter;
+                });
+            }
+            
+            // Filter by status
+            if (statusFilter !== 'all') {
+                filteredAllocations = filteredAllocations.filter(allocation => allocation.status === statusFilter);
+            }
+            
+            calculateHospitalSummary(filteredAllocations);
+        }
+
+        function calculateHospitalSummary(allocations) {
+            const hospitalData = {};
+            
+            // Group allocations by hospital
+            allocations.forEach(allocation => {
+                const hospitalName = allocation.hospitalname || 'Unknown';
+                
+                if (!hospitalData[hospitalName]) {
+                    hospitalData[hospitalName] = {
+                        totalRequests: 0,
+                        pending: 0,
+                        approved: 0,
+                        rejected: 0,
+                        totalRequested: 0,
+                        totalApproved: 0,
+                        allocations: []
+                    };
+                }
+                
+                hospitalData[hospitalName].totalRequests++;
+                hospitalData[hospitalName][allocation.status.toLowerCase()]++;
+                hospitalData[hospitalName].totalRequested += parseFloat(allocation.requiredamount);
+                
+                if (allocation.approvedamount > 0) {
+                    hospitalData[hospitalName].totalApproved += parseFloat(allocation.approvedamount);
+                }
+                
+                hospitalData[hospitalName].allocations.push(allocation);
+            });
+            
+            displayHospitalSummary(hospitalData);
+        }
+
+        function displayHospitalSummary(hospitalData) {
+            const hospitalSummaryGrid = document.getElementById('hospitalSummaryGrid');
+            const hospitalSummaryTableBody = document.getElementById('hospitalSummaryTableBody');
+            
+            hospitalSummaryGrid.innerHTML = '';
+            hospitalSummaryTableBody.innerHTML = '';
+            
+            if (Object.keys(hospitalData).length === 0) {
+                hospitalSummaryGrid.innerHTML = '<div class="text-center w-100">No hospital data available</div>';
+                hospitalSummaryTableBody.innerHTML = '<tr><td colspan="9" class="text-center">No hospital data available</td></tr>';
+                return;
+            }
+            
+            Object.keys(hospitalData).forEach(hospitalName => {
+                const data = hospitalData[hospitalName];
+                const approvalRate = data.totalRequests > 0 ? Math.round((data.approved / data.totalRequests) * 100) : 0;
+                
+                // Create summary card
+                const card = document.createElement('div');
+                card.className = 'hospital-summary-card';
+                card.innerHTML = `
+                    <div class="hospital-summary-header">
+                        <div class="hospital-summary-name">${hospitalName}</div>
+                        <div class="hospital-summary-count">${data.totalRequests}</div>
+                    </div>
+                    <div class="hospital-summary-stats">
+                        <div class="hospital-stat-item">
+                            <div class="hospital-stat-value">${data.pending}</div>
+                            <div class="hospital-stat-label">Pending</div>
+                        </div>
+                        <div class="hospital-stat-item">
+                            <div class="hospital-stat-value">${data.approved}</div>
+                            <div class="hospital-stat-label">Approved</div>
+                        </div>
+                        <div class="hospital-stat-item">
+                            <div class="hospital-stat-value">${data.rejected}</div>
+                            <div class="hospital-stat-label">Rejected</div>
+                        </div>
+                        <div class="hospital-stat-item">
+                            <div class="hospital-stat-value">${approvalRate}%</div>
+                            <div class="hospital-stat-label">Approval Rate</div>
+                        </div>
+                    </div>
+                    <div class="mt-10">
+                        <button class="btn btn-sm btn-block" onclick="viewHospitalHistory('${hospitalName}')">View Details</button>
+                    </div>
+                `;
+                hospitalSummaryGrid.appendChild(card);
+                
+                // Create table row
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${hospitalName}</td>
+                    <td>${data.totalRequests}</td>
+                    <td>${data.pending}</td>
+                    <td>${data.approved}</td>
+                    <td>${data.rejected}</td>
+                    <td>${formatCurrency(data.totalRequested)}</td>
+                    <td>${formatCurrency(data.totalApproved)}</td>
+                    <td>${approvalRate}%</td>
+                    <td>
+                        <button class="action-btn btn" onclick="viewHospitalHistory('${hospitalName}')">View History</button>
+                    </td>
+                `;
+                hospitalSummaryTableBody.appendChild(tr);
+            });
+        }
+
+        // Export hospital summary to Excel
+        function exportHospitalSummaryToExcel() {
+            const yearFilter = document.getElementById('hospitalSummaryYearFilter').value;
+            
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "Hospital,Total Requests,Pending,Approved,Rejected,Total Requested,Total Approved,Approval Rate\n"
+                + Array.from(document.querySelectorAll('#hospitalSummaryTableBody tr')).map(row => {
+                    const cells = row.querySelectorAll('td');
+                    return Array.from(cells).map(cell => `"${cell.textContent}"`).join(',');
+                }).join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', `hospital_summary_${yearFilter}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            logSystemActivity('report', 'Administrator', 'Hospital Summary Exported', `Year: ${yearFilter}`);
         }
 
         // Report Functions
@@ -3985,31 +5592,36 @@
 
             y += 10;
 
-            // Signature section with two signatures
-            const signatureY = y;
-
-            // Left signature - Deputy Director General
-            doc.setDrawColor(0, 0, 0);
-            doc.line(20, signatureY, 80, signatureY);
-            doc.setFont(undefined, 'bold');
-            doc.setFontSize(8);
-            doc.text('H.M.N Dinipriya Herath', 20, signatureY + 5);
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(7);
-            doc.text('Deputy Director General (Logistics)', 20, signatureY + 9);
-            doc.text('For Secretary', 20, signatureY + 13);
-
-            // Right signature - Director Building Branch
-            doc.line(110, signatureY, 170, signatureY);
-            doc.setFont(undefined, 'bold');
-            doc.setFontSize(8);
-            doc.text('Director Building Branch', 110, signatureY + 5);
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(7);
-            doc.text('Director Building Branch (Administration)', 110, signatureY + 9);
+            // Add Hospital Signature
+            y = addHospitalSignatureToPDF(doc, allocation, y);
+            
+            // Add appropriate signature based on approving authority
+            if (allocation.approvingauthority === 'Deputy Director General (Logistics)') {
+                // DDG signature only
+                doc.setDrawColor(0, 0, 0);
+                doc.line(20, y, 80, y);
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(8);
+                doc.text('H.M.N Dinipriya Herath', 20, y + 5);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(7);
+                doc.text('Deputy Director General (Logistics)', 20, y + 9);
+                doc.text('For Secretary', 20, y + 13);
+                y += 20;
+            } else if (allocation.approvingauthority === 'Director Building (Administration)') {
+                // Director signature only
+                doc.setDrawColor(0, 0, 0);
+                doc.line(20, y, 80, y);
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(8);
+                doc.text('Director Building Branch', 20, y + 5);
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(7);
+                doc.text('Director Building Branch (Administration)', 20, y + 9);
+                y += 15;
+            }
 
             // Copy distribution note
-            y = signatureY + 20;
             doc.setFont(undefined, 'italic');
             doc.setFontSize(7);
             doc.text('Copies:', 20, y);
@@ -4017,6 +5629,28 @@
             doc.text('1. Accountant (Budget - Control) - For kind information and necessary action (f.k.i. & n.a.)', 22, y);
             y += 4;
             doc.text('2. Officer-in-Charge of Subject B02 - For kind information and necessary action (f.k.i. & n.a.)', 22, y);
+        }
+
+        // Add hospital signature to PDF
+        function addHospitalSignatureToPDF(doc, allocation, yPosition) {
+            const signatory = hospitalSignatories[allocation.hospitalname] || {
+                name: '[Hospital Director/Deputy Director General]',
+                title: '[Position]',
+                institution: allocation.hospitalname
+            };
+            
+            doc.setDrawColor(0, 0, 0);
+            doc.line(20, yPosition, 80, yPosition);
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(8);
+            doc.text('Hospital Authorization:', 20, yPosition + 5);
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(7);
+            doc.text(signatory.name, 20, yPosition + 9);
+            doc.text(signatory.title, 20, yPosition + 13);
+            doc.text(signatory.institution, 20, yPosition + 17);
+            
+            return yPosition + 22;
         }
 
         function downloadFinalPDF() {
@@ -4077,6 +5711,10 @@
                         loadMyRequests();
                     } else if (this.getAttribute('data-tab') === 'allocations') {
                         updateUserAllocationStatus();
+                    } else if (this.getAttribute('data-tab') === 'history') {
+                        loadAllocationHistory();
+                    } else if (this.getAttribute('data-tab') === 'voteDistribution') {
+                        loadVoteDistribution();
                     }
                 });
             });
@@ -4096,6 +5734,18 @@
                 filterUserAllocations(myAllocations);
             });
             
+            // History filters
+            document.getElementById('historyYearFilter').addEventListener('change', loadAllocationHistory);
+            document.getElementById('historyVoteFilter').addEventListener('change', loadAllocationHistory);
+            document.getElementById('historyStatusFilter').addEventListener('change', loadAllocationHistory);
+            
+            // Vote distribution filters
+            document.getElementById('distributionYearFilter').addEventListener('change', loadVoteDistribution);
+            document.getElementById('exportVoteDistribution').addEventListener('click', exportVoteDistributionToExcel);
+            document.getElementById('printVoteDistribution').addEventListener('click', function() {
+                window.print();
+            });
+            
             // Admin tabs
             document.querySelectorAll('.admin-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
@@ -4113,6 +5763,12 @@
                         loadSystemLogs();
                     } else if (this.getAttribute('data-tab') === 'allocations') {
                         updateAllocationStatus();
+                    } else if (this.getAttribute('data-tab') === 'allocationHistory') {
+                        loadAdminAllocationHistory();
+                    } else if (this.getAttribute('data-tab') === 'voteDistribution') {
+                        loadAdminVoteDistribution();
+                    } else if (this.getAttribute('data-tab') === 'hospitalSummary') {
+                        loadHospitalSummary();
                     } else if (this.getAttribute('data-tab') === 'reports') {
                         populateHospitalFilter();
                     }
@@ -4129,6 +5785,29 @@
             
             // Allocation status search
             document.getElementById('searchAllocationsStatus').addEventListener('input', searchAllocationsStatus);
+            document.getElementById('statusFilterAllocations').addEventListener('change', function() {
+                searchAllocationsStatus();
+            });
+            
+            // Admin history filters
+            document.getElementById('adminHistoryYearFilter').addEventListener('change', loadAdminAllocationHistory);
+            document.getElementById('adminHistoryHospitalFilter').addEventListener('change', loadAdminAllocationHistory);
+            document.getElementById('adminHistoryStatusFilter').addEventListener('change', loadAdminAllocationHistory);
+            
+            // Admin vote distribution filters
+            document.getElementById('adminDistributionYearFilter').addEventListener('change', loadAdminVoteDistribution);
+            document.getElementById('exportAdminVoteDistribution').addEventListener('click', exportAdminVoteDistributionToExcel);
+            document.getElementById('printAdminVoteDistribution').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Hospital summary filters
+            document.getElementById('hospitalSummaryYearFilter').addEventListener('change', loadHospitalSummary);
+            document.getElementById('hospitalSummaryStatusFilter').addEventListener('change', loadHospitalSummary);
+            document.getElementById('exportHospitalSummary').addEventListener('click', exportHospitalSummaryToExcel);
+            document.getElementById('printHospitalSummary').addEventListener('click', function() {
+                window.print();
+            });
             
             // Modal close buttons
             document.querySelectorAll('.close-modal').forEach(button => {
@@ -4153,6 +5832,10 @@
             
             document.getElementById('cancelAdminPassword').addEventListener('click', function() {
                 hideModal('adminPasswordModal');
+            });
+            
+            document.getElementById('closeHospitalHistory').addEventListener('click', function() {
+                hideModal('hospitalHistoryModal');
             });
             
             // Modal confirm buttons
@@ -4193,6 +5876,28 @@
             // Logs buttons
             document.getElementById('refreshLogs').addEventListener('click', loadSystemLogs);
             document.getElementById('exportLogs').addEventListener('click', exportLogs);
+            
+            // Export hospital history
+            document.getElementById('exportHospitalHistory').addEventListener('click', function() {
+                const hospitalName = document.getElementById('hospitalHistoryTitle').textContent.replace('Allocation History for ', '');
+                const hospitalAllocations = allAllocations.filter(allocation => allocation.hospitalname === hospitalName);
+                
+                const csvContent = "data:text/csv;charset=utf-8," 
+                    + "Reference,Vote Number,Job Description,Requested Amount,Approved Amount,Status,Submitted Date,Approved Date\n"
+                    + hospitalAllocations.map(allocation => 
+                        `"${allocation.refnumber}","${allocation.votenumber}","${allocation.jobdescription}","${allocation.requiredamount}","${allocation.approvedamount}","${allocation.status}","${formatDate(allocation.timestamp)}","${allocation.approvaldate ? formatDate(allocation.approvaldate) : 'N/A'}"`
+                    ).join("\n");
+                
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement('a');
+                link.setAttribute('href', encodedUri);
+                link.setAttribute('download', `hospital_history_${hospitalName.replace(/\s+/g, '_')}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                logSystemActivity('report', 'Administrator', 'Hospital History Exported', `Hospital: ${hospitalName}`);
+            });
             
             // Close modals when clicking outside
             document.querySelectorAll('.modal').forEach(modal => {
