@@ -5323,66 +5323,122 @@ function generateQRCode(text, width = 80, height = 80) {
 }
 
 
-// PDF Generation Functions
-function generatePDF(isFinal = false) {
+// Add these new PDF generation functions and update the existing ones
+
+// Professional PDF Generation Functions
+function generateProfessionalPDF(isFinal = false) {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = new jsPDF('p', 'mm', 'a4');
     
-    // Header
-    doc.setFontSize(18);
-    doc.setTextColor(26, 115, 232);
-    doc.setFont(undefined, 'bold');
-    doc.text('MINISTRY OF HEALTH', 105, 15, { align: 'center' });
+    // Constants for layout
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 20;
+    const contentWidth = pageWidth - (margin * 2);
     
-    doc.setFontSize(13);
-    doc.setTextColor(95, 99, 104);
-    doc.text('Allocation Distribution System', 105, 22, { align: 'center' });
+    let yPosition = margin;
     
+    // ========== HEADER ==========
+    // Official Government Header
+    doc.setFillColor(26, 115, 232);
+    doc.rect(0, 0, pageWidth, 25, 'F');
+    
+    // Ministry Logo/Text
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text("MINISTRY OF HEALTH", pageWidth / 2, 15, { align: 'center' });
+    
+    // Subtitle
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text("Government of Sri Lanka", pageWidth / 2, 22, { align: 'center' });
+    
+    // Document Type
     doc.setDrawColor(26, 115, 232);
-    doc.line(20, 27, 190, 27);
-    
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(margin, 30, contentWidth, 15, 3, 3, 'F');
+    doc.setTextColor(26, 115, 232);
     doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text(isFinal ? 'ALLOCATION APPROVAL CONFIRMATION' : 'ALLOCATION REQUEST', 105, 35, { align: 'center' });
+    doc.setFont('helvetica', 'bold');
+    const title = isFinal ? "ALLOCATION APPROVAL CERTIFICATE" : "ALLOCATION REQUEST FORM";
+    doc.text(title, pageWidth / 2, 40, { align: 'center' });
     
+    yPosition = 50;
+    
+    // ========== DOCUMENT REFERENCE ==========
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
+    // Document Border
+    doc.setDrawColor(200, 200, 200);
+    doc.roundedRect(margin, yPosition, contentWidth, pageHeight - 120, 3, 3, 'S');
+    
+    // Reference Info Box
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(margin + 5, yPosition + 5, contentWidth - 10, 20, 2, 2, 'F');
+    
+    // Get allocation data
+    let allocation;
     if (isFinal) {
-        let allocation;
         if (currentUserRole === 'hospital') {
             allocation = filteredMyRequests.find(a => a.id == currentRequestId);
         } else {
             allocation = allAllocations.find(a => a.id === currentRequestId);
         }
-        
-        if (allocation) {
-            addFormalAllocationContentToPDF(doc, allocation, true);
-        }
-    } else {
-        addFormalPreviewContentToPDF(doc);
     }
     
-    // Footer
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text('Official Document - Ministry of Health Allocation Distribution System', 105, 287, { align: 'center' });
-    doc.text(`Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 105, 291, { align: 'center' });
+    // Reference and Dates
+    if (isFinal && allocation) {
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`REFERENCE: ${allocation.refnumber}`, margin + 10, yPosition + 15);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.text(`Date: ${formatDate(allocation.timestamp)}`, pageWidth - margin - 70, yPosition + 15);
+        if (allocation.approvaldate) {
+            doc.text(`Approval Date: ${formatDate(allocation.approvaldate)}`, pageWidth - margin - 70, yPosition + 20);
+        }
+    } else {
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        const refNumber = document.getElementById('enhancedPdfRefNumber').textContent;
+        doc.text(`REFERENCE: ${refNumber}`, margin + 10, yPosition + 15);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        const submissionDate = document.getElementById('enhancedPdfDate').textContent;
+        doc.text(`Submission Date: ${submissionDate}`, pageWidth - margin - 70, yPosition + 15);
+    }
+    
+    yPosition += 30;
+    
+    if (isFinal && allocation) {
+        // ========== FINAL APPROVAL CONTENT ==========
+        addFinalApprovalContent(doc, allocation, margin, yPosition, contentWidth, pageWidth);
+    } else {
+        // ========== REQUEST PREVIEW CONTENT ==========
+        addRequestPreviewContent(doc, margin, yPosition, contentWidth, pageWidth);
+    }
+    
+    // ========== FOOTER WITH QR CODE ==========
+    addFooterWithQRCode(doc, pageWidth, pageHeight, margin, isFinal, allocation);
     
     const fileName = isFinal ? 
-        `allocation_approval_${currentRequestRef}.pdf` : 
-        `allocation_request_${currentRequestRef}.pdf`;
+        `Allocation_Approval_${allocation?.refnumber || currentRequestRef}.pdf` : 
+        `Allocation_Request_${currentRequestRef}.pdf`;
     
     doc.save(fileName);
     
     logSystemActivity('system', currentUserRole, 'PDF Downloaded', 
-        isFinal ? `Final approval for ${currentRequestRef}` : `Request preview for ${currentRequestRef}`);
+        isFinal ? `Final approval for ${allocation?.refnumber || currentRequestRef}` : 
+                  `Request preview for ${currentRequestRef}`);
 }
 
-function addFormalPreviewContentToPDF(doc) {
-    let yPosition = 42;
+function addRequestPreviewContent(doc, margin, yStart, contentWidth, pageWidth) {
+    let yPosition = yStart;
     
-    // Get data from the displayed preview elements
-    const refNumber = document.getElementById('enhancedPdfRefNumber').textContent;
-    const uniquePassword = document.getElementById('enhancedPdfPassword').textContent;
-    const submissionDate = document.getElementById('enhancedPdfDate').textContent;
+    // Get data from preview elements
     const hospitalDetails = document.getElementById('enhancedPdfHospitalDetails').textContent;
     const voteNumber = document.getElementById('enhancedPdfVoteNumber').textContent;
     const jobDescription = document.getElementById('enhancedPdfJobDescription').textContent;
@@ -5390,22 +5446,7 @@ function addFormalPreviewContentToPDF(doc) {
     const priority = document.getElementById('enhancedPdfPriority').textContent;
     const requiredDate = document.getElementById('enhancedPdfRequiredDate').textContent;
     const additionalNotes = document.getElementById('enhancedPdfAdditionalNotes').textContent;
-
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`Request Reference: ${refNumber}`, 20, yPosition);
-    doc.text(`Date: ${submissionDate}`, 130, yPosition);
-    
-    yPosition += 10;
-    
-    // Hospital Details Section
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(11);
-    doc.text('HOSPITAL DETAILS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(9);
-    
-    yPosition += 6;
+    const uniquePassword = document.getElementById('enhancedPdfPassword').textContent;
     
     // Parse hospital details
     const hospitalParts = hospitalDetails.split(', ');
@@ -5413,475 +5454,585 @@ function addFormalPreviewContentToPDF(doc) {
     const contactPerson = hospitalParts[1] || '';
     const contactPhone = hospitalParts[2] || '';
     
-    doc.text(`Hospital: ${hospitalName}`, 22, yPosition);
-    yPosition += 5;
-    doc.text(`Contact Person: ${contactPerson}`, 22, yPosition);
-    yPosition += 5;
-    doc.text(`Contact Phone: ${contactPhone}`, 22, yPosition);
-    
-    yPosition += 10;
-    
-    // Allocation Details Section
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(11);
-    doc.text('ALLOCATION DETAILS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(9);
-    
-    yPosition += 6;
-    
-    doc.text(`Vote Number: ${voteNumber}`, 22, yPosition);
-    yPosition += 5;
-    doc.text(`Required Amount: ${amount}`, 22, yPosition);
-    yPosition += 5;
-    doc.text(`Priority Level: ${priority}`, 22, yPosition);
-    yPosition += 5;
-    doc.text(`Required Date: ${requiredDate}`, 22, yPosition);
-    yPosition += 5;
-    
-    // Job Description
-    doc.text('Job Description:', 22, yPosition);
-    yPosition += 5;
-    const jobLines = doc.splitTextToSize(jobDescription, 170);
-    doc.text(jobLines, 22, yPosition);
-    yPosition += jobLines.length * 5;
-    
-    yPosition += 10;
-    
-    // Status Section
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(11);
-    doc.text('STATUS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(9);
-    
-    yPosition += 6;
-    doc.text('Pending Approval', 22, yPosition);
-    
-    yPosition += 10;
-    
-    // Important Notice
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(10);
-    doc.text('IMPORTANT INFORMATION', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(9);
-    
-    yPosition += 6;
-    doc.text('Please save this document for future reference and inquiries.', 22, yPosition);
-    yPosition += 5;
-    doc.text(`Your unique request password: ${uniquePassword}`, 22, yPosition);
-    
-    yPosition += 12;
-    
-    // Two-column layout for signature and comments
-    // Left side: Signature area
-    doc.setDrawColor(0, 0, 0);
-    doc.line(20, yPosition, 80, yPosition); // Signature line
-    
-    // Right side: Comments and notes
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(9);
-    doc.text('ADDITIONAL NOTES', 110, yPosition);
-    
-    yPosition += 5;
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(7);
-    
-    // Split notes into manageable lines
-    const noteLines = doc.splitTextToSize(additionalNotes, 85);
-    doc.text(noteLines, 110, yPosition);
-    
-    // Now, the signature text below the line (left side)
-    yPosition += noteLines.length * 4;
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(8);
-    doc.text('Approval Signature', 20, yPosition);
-    
-    yPosition += 4;
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(7);
-    doc.text('DDG Logistics / Director Building Admin', 20, yPosition);
-}
-
-function addFormalAllocationContentToPDF(doc, allocation, isFinal = false) {
-    let y = 40;
-
-    doc.setFontSize(10);
-    doc.setTextColor(0, 0, 0);
-
-    // Header
-    doc.text(`Request Reference: ${allocation.refnumber}`, 20, y);
-    doc.text(`Date: ${formatDate(allocation.timestamp)}`, 120, y);
-
-    y += 12;
-
-    // Hospital Details
-    doc.setFont(undefined, 'bold');
-    doc.text('HOSPITAL DETAILS', 20, y);
-
-    y += 6;
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(8);
-
-    doc.text(`Hospital: ${allocation.hospitalname}`, 22, y); y += 4;
-    doc.text(`Contact Person: ${allocation.contactperson}`, 22, y); y += 4;
-    doc.text(`Contact Phone: ${allocation.contactphone}`, 22, y); y += 4;
-    if (allocation.contactemail) {
-        doc.text(`Contact Email: ${allocation.contactemail}`, 22, y); y += 4;
-    }
-
-    y += 10;
-
-    // Allocation Details
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(10);
-    doc.text('ALLOCATION DETAILS', 20, y);
-
-    y += 6;
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(8);
-
-    doc.text(`Vote Number: ${allocation.votenumber}`, 22, y); y += 4;
-    doc.text(`Job Description: ${allocation.jobdescription}`, 22, y); y += 4;
-    doc.text(`Requested Amount: ${formatCurrency(allocation.requiredamount)}`, 22, y); y += 4;
-    doc.text(`Approved Amount: ${formatCurrency(allocation.approvedamount)}`, 22, y); y += 4;
-    doc.text(`Priority Level: ${allocation.prioritylevel}`, 22, y); y += 4;
-    doc.text(`Required Date: ${formatDate(allocation.requireddate)}`, 22, y); y += 4;
-
-    y += 10;
-
-    // Approval Details
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(10);
-    doc.text('APPROVAL DETAILS', 20, y);
-
-    y += 6;
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(8);
-
-    doc.text(`Status: ${allocation.status}`, 22, y); y += 4;
-    doc.text(`Approving Authority: ${allocation.approvingauthority}`, 22, y); y += 4;
-    if (allocation.approvalnotes) {
-        doc.text(`Approval Notes: ${allocation.approvalnotes}`, 22, y); y += 4;
-    }
-    doc.text(`Approval Date: ${formatDate(allocation.approvaldate)}`, 22, y); y += 4;
-
-    y += 10;
-
-    // Important Instructions
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(10);
-    doc.text('IMPORTANT INSTRUCTIONS', 20, y);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(8);
-
-    y += 6;
-    const instructions = [
-        "1. Action should be taken in accordance with the Government Financial Regulations (GFR), Establishment Code,",
-        "   GFR 135 on Delegation of Authority, other laws and regulations, and the relevant instructions of Budget",
-        "   Circular No. 01/2025 dated 22.03.2025, which authorizes expenditure for the year 2025 and pertains to",
-        "   public expenditure management.",
-        "2. The relevant work subjects should be executed upon approval by your Hospital's Regional Procurement",
-        "   Committee, in accordance with this Ministry Circular and instructions.",
-        "3. In order to prevent the Government as well as the contractors/service providers from facing difficulties",
-        "   due to the accumulation of unsettled liabilities, it is important to confirm the availability of cash flow",
-        "   before entering into commitments, even if the provision has been allocated.",
-        "4. Starting work without provisions should especially be avoided, and expenses exceeding the limit of the",
-        "   allocated provisions should not be incurred.",
-        "5. The provisions granted through this letter will expire on 31.12.2026.",
-        "6. Monthly expenditure reports, stating the work subjects for which the provisions were expended, must be",
-        "   submitted by the Accountant of the Hospitals/Institutions to the email address ddglogisticsmoh@gmail.com.",
-        "   The Institutional Section must also complete the physical and financial progress for every month",
-        "   according to the provided format. Both these reports must be submitted before the 10th day of the",
-        "   following month."
-    ];
-
-    instructions.forEach(instruction => {
-        const lines = doc.splitTextToSize(instruction, 170);
-        lines.forEach(line => {
-            if (y > 270) {
-                doc.addPage();
-                y = 20;
-            }
-            doc.text(line, 22, y);
-            y += 5;
-        });
-    });
-
-    // Signature Section
-    y += 10;
-    if (y > 250) {
-        doc.addPage();
-        y = 20;
-    }
-
-    // Draw a line for signature
-    doc.setDrawColor(0, 0, 0);
-    doc.line(20, y, 80, y);
-
-    // Signature label
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(8);
-    doc.text('Approval Signature', 20, y + 5);
-
-    // Depending on the approving authority, show the appropriate signature
-    if (allocation.approvingauthority === 'Deputy Director General (Logistics)') {
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(7);
-        doc.text('H.M.N Dinipriya Herath', 20, y + 10);
-        doc.text('Deputy Director General (Logistics)', 20, y + 15);
-        doc.text('For Secretary', 20, y + 20);
-    } else if (allocation.approvingauthority === 'Director Building (Administration)') {
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(7);
-        doc.text('Director Building Branch', 20, y + 10);
-        doc.text('Director Building Branch (Administration)', 20, y + 15);
-    }
-
-    // Hospital Signature (if available)
-    const signatory = hospitalSignatories[allocation.hospitalname];
-    if (signatory) {
-        // Draw a line for hospital signature on the right side
-        doc.line(120, y, 180, y);
-        doc.setFont(undefined, 'bold');
-        doc.setFontSize(8);
-        doc.text('Hospital Authorization', 120, y + 5);
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(7);
-        doc.text(signatory.name, 120, y + 10);
-        doc.text(signatory.title, 120, y + 15);
-        doc.text(signatory.institution, 120, y + 20);
-    }
-
-    // Copies Section
-    y += 30;
-    if (y > 270) {
-        doc.addPage();
-        y = 20;
-    }
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(8);
-    doc.text('Copies:', 20, y);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(7);
-    doc.text('1. Accountant (Budget - Control) - For kind information and necessary action (f.k.i. & n.a.)', 22, y + 5);
-    doc.text('2. Officer-in-Charge of Subject B02 - For kind information and necessary action (f.k.i. & n.a.)', 22, y + 10);
-}
-
-// Generate Admin Confirmation PDF
-function generateAdminConfirmationPDF(allocation) {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Set up PDF document
-    doc.setFontSize(18);
+    // Section 1: Hospital Information
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
     doc.setTextColor(26, 115, 232);
-    doc.setFont(undefined, 'bold');
-    doc.text('MINISTRY OF HEALTH', 105, 15, { align: 'center' });
+    doc.text("1. HOSPITAL INFORMATION", margin + 5, yPosition);
     
-    doc.setFontSize(14);
-    doc.setTextColor(95, 99, 104);
-    doc.text('Allocation Distribution System', 105, 22, { align: 'center' });
-    
-    // Draw a line
-    doc.setDrawColor(26, 115, 232);
-    doc.line(20, 27, 190, 27);
-    
-    // Title
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text('ALLOCATION APPROVAL CONFIRMATION', 105, 35, { align: 'center' });
-    
-    let yPosition = 45;
-    
-    // Reference Number
-    doc.setFontSize(10);
-    doc.text(`Reference Number: ${allocation.refnumber}`, 20, yPosition);
-    yPosition += 8;
-    
-    // Approval Date
-    doc.text(`Approval Date: ${formatDate(allocation.approvaldate || new Date().toISOString())}`, 20, yPosition);
-    yPosition += 8;
-    
-    // Hospital Details Section
-    doc.setFont(undefined, 'bold');
-    doc.text('HOSPITAL DETAILS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    yPosition += 8;
-    
-    doc.text(`Hospital Name: ${allocation.hospitalname}`, 22, yPosition);
-    yPosition += 6;
-    doc.text(`Contact Person: ${allocation.contactperson}`, 22, yPosition);
-    yPosition += 6;
-    doc.text(`Contact Phone: ${allocation.contactphone}`, 22, yPosition);
-    yPosition += 6;
-    if (allocation.contactemail) {
-        doc.text(`Contact Email: ${allocation.contactemail}`, 22, yPosition);
-        yPosition += 6;
-    }
-    
-    // Allocation Details Section
-    doc.setFont(undefined, 'bold');
-    doc.text('ALLOCATION DETAILS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    yPosition += 8;
-    
-    doc.text(`Vote Number: ${allocation.votenumber}`, 22, yPosition);
-    yPosition += 6;
-    doc.text(`Job Description: ${allocation.jobdescription}`, 22, yPosition);
-    yPosition += 12;
-    
-    // Amount Details
-    doc.text(`Requested Amount: ${formatCurrency(allocation.requiredamount)}`, 22, yPosition);
-    yPosition += 6;
-    doc.text(`Approved Amount: ${formatCurrency(allocation.approvedamount)}`, 22, yPosition);
-    yPosition += 6;
-    
-    // Other Details
-    doc.text(`Priority Level: ${allocation.prioritylevel}`, 22, yPosition);
-    yPosition += 6;
-    doc.text(`Required Date: ${formatDate(allocation.requireddate)}`, 22, yPosition);
-    yPosition += 6;
-    
-    // Approval Details
-    doc.setFont(undefined, 'bold');
-    doc.text('APPROVAL DETAILS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    yPosition += 8;
-    
-    doc.text(`Status: ${allocation.status}`, 22, yPosition);
-    yPosition += 6;
-    doc.text(`Approving Authority: ${allocation.approvingauthority}`, 22, yPosition);
-    yPosition += 6;
-    
-    if (allocation.approvalnotes) {
-        doc.text(`Approval Notes: ${allocation.approvalnotes}`, 22, yPosition);
-        yPosition += 12;
-    }
-    
-    // Important Instructions Section
     yPosition += 10;
-    doc.setFont(undefined, 'bold');
+    
     doc.setFontSize(10);
-    doc.text('IMPORTANT INSTRUCTIONS', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
     
-    yPosition += 8;
+    // Create a two-column layout for hospital info
+    doc.text(`Hospital Name:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(hospitalName, margin + 40, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    doc.text(`Contact Person:`, pageWidth / 2, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(contactPerson, pageWidth / 2 + 30, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    doc.text(`Contact Phone:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(contactPhone, margin + 40, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 15;
+    
+    // Section 2: Allocation Details
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("2. ALLOCATION DETAILS", margin + 5, yPosition);
+    
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
+    // Vote Number
+    doc.text(`Vote Number:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(voteNumber, margin + 40, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    // Priority
+    doc.text(`Priority:`, pageWidth / 2, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(priority, pageWidth / 2 + 25, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    // Amount
+    doc.text(`Requested Amount:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(amount, margin + 50, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    // Required Date
+    doc.text(`Required Date:`, pageWidth / 2, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(requiredDate, pageWidth / 2 + 30, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    // Job Description Title
+    doc.text(`Job Description:`, margin + 10, yPosition);
+    yPosition += 7;
+    
+    // Job Description Content (with auto line breaks)
+    const jobDescLines = doc.splitTextToSize(jobDescription, contentWidth - 20);
+    doc.text(jobDescLines, margin + 15, yPosition);
+    yPosition += jobDescLines.length * 5 + 10;
+    
+    // Additional Notes (if any)
+    if (additionalNotes && additionalNotes !== 'No additional notes') {
+        doc.text(`Additional Notes:`, margin + 10, yPosition);
+        yPosition += 7;
+        const noteLines = doc.splitTextToSize(additionalNotes, contentWidth - 20);
+        doc.text(noteLines, margin + 15, yPosition);
+        yPosition += noteLines.length * 5 + 10;
+    }
+    
+    // Section 3: Important Information
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("3. IMPORTANT INFORMATION", margin + 5, yPosition);
+    
+    yPosition += 10;
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
     const instructions = [
-    "1. All actions shall be carried out in strict compliance with the Government Financial Regulations (GFR),",
-    "   Establishment Code, GFR 135 on Delegation of Authority, all other applicable laws and regulations, and the",
-    "   instructions issued under Budget Circular No. 01/2025 dated 22.03.2025, which authorizes public expenditure",
-    "   for the year 2025.",
+        "I. This is an official allocation request submitted to the Ministry of Health.",
+        "II. Request will be processed within 7-14 working days.",
+        "III. Keep this document and the unique password for future reference.",
+        "IV. For inquiries, contact: ddglogisticsmoh@gmail.com",
+        "V. Reference your request number in all communications."
+    ];
     
-    "2. The relevant work subjects shall be implemented only after obtaining approval from the respective",
-    "   Regional Procurement Committee of the Hospital, in accordance with this Ministry Circular and related",
-    "   instructions.",
-    
-    "3. In order to avoid difficulties arising from the accumulation of unsettled liabilities for both the",
-    "   Government and contractors/service providers, it is mandatory to confirm the availability of adequate",
-    "   cash flow prior to entering into any commitments, even where budgetary provisions have been allocated.",
-    
-    "4. Commencing work without approved provisions and incurring expenditure in excess of the allocated",
-    "   provision limits shall be strictly avoided.",
-    
-    "5. The financial provisions granted under this letter shall remain valid only up to 31.12.2026.",
-    
-    "6. Monthly expenditure reports, indicating the work subjects for which the provisions have been utilized,",
-    "   shall be submitted by the Accountant of the respective Hospital/Institution to",
-    "   ddglogisticsmoh@gmail.com. In addition, the Institutional Section shall submit the monthly physical and",
-    "   financial progress reports in the prescribed format. Both reports must be submitted on or before the",
-    "   10th day of the following month."
-];
-    
-    instructions.forEach(instruction => {
-        if (yPosition > 270) {
-            doc.addPage();
-            yPosition = 20;
-        }
-        doc.text(instruction, 22, yPosition);
-        yPosition += 5;
+    instructions.forEach((instruction, index) => {
+        doc.text(instruction, margin + 10, yPosition + (index * 5));
     });
     
-    // Signature Section
+    yPosition += instructions.length * 5 + 10;
+    
+    // Unique Password Box
+    doc.setDrawColor(26, 115, 232);
+    doc.setFillColor(240, 248, 255);
+    doc.roundedRect(margin + 10, yPosition, contentWidth - 20, 15, 3, 3, 'FD');
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("UNIQUE REQUEST PASSWORD:", margin + 15, yPosition + 10);
+    
+    doc.setFont('courier', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text(uniquePassword, margin + 80, yPosition + 10);
+    
+    yPosition += 25;
+    
+    // ========== SIGNATURE SECTION ==========
+    addSignatureSection(doc, margin, yPosition, contentWidth, pageWidth, hospitalName, null, false);
+}
+
+function addFinalApprovalContent(doc, allocation, margin, yStart, contentWidth, pageWidth) {
+    let yPosition = yStart;
+    
+    // Section 1: Allocation Summary
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("ALLOCATION APPROVAL SUMMARY", margin + 5, yPosition);
+    
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
+    // Hospital Information
+    doc.text(`Hospital:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(allocation.hospitalname, margin + 30, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    doc.text(`Contact:`, pageWidth / 2, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(allocation.contactperson, pageWidth / 2 + 25, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    // Allocation Details
+    doc.text(`Vote Number:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(allocation.votenumber, margin + 40, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    doc.text(`Priority:`, pageWidth / 2, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(allocation.prioritylevel, pageWidth / 2 + 25, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    // Amount Information
+    doc.text(`Requested Amount:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(formatCurrency(allocation.requiredamount), margin + 55, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    doc.text(`Approved Amount:`, pageWidth / 2, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(formatCurrency(allocation.approvedamount), pageWidth / 2 + 45, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    // Dates
+    doc.text(`Submitted:`, margin + 10, yPosition);
+    doc.text(formatDate(allocation.timestamp), margin + 35, yPosition);
+    
+    doc.text(`Required Date:`, pageWidth / 2, yPosition);
+    doc.text(formatDate(allocation.requireddate), pageWidth / 2 + 35, yPosition);
+    
     yPosition += 15;
-    if (yPosition > 250) {
-        doc.addPage();
-        yPosition = 20;
+    
+    // Section 2: Job Description
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("JOB DESCRIPTION", margin + 5, yPosition);
+    
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
+    const jobDescLines = doc.splitTextToSize(allocation.jobdescription, contentWidth - 20);
+    doc.text(jobDescLines, margin + 10, yPosition);
+    yPosition += jobDescLines.length * 5 + 10;
+    
+    // Section 3: Approval Details
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("APPROVAL DETAILS", margin + 5, yPosition);
+    
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
+    doc.text(`Approving Authority:`, margin + 10, yPosition);
+    doc.setFont('helvetica', 'bold');
+    doc.text(allocation.approvingauthority, margin + 55, yPosition);
+    doc.setFont('helvetica', 'normal');
+    
+    yPosition += 7;
+    
+    if (allocation.approvalnotes) {
+        doc.text(`Approval Notes:`, margin + 10, yPosition);
+        const noteLines = doc.splitTextToSize(allocation.approvalnotes, contentWidth - 30);
+        doc.text(noteLines, margin + 15, yPosition + 5);
+        yPosition += noteLines.length * 5 + 15;
     }
     
-    // Signature line
-    doc.line(20, yPosition, 80, yPosition);
-    yPosition += 5;
+    // Section 4: Important Instructions
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("IMPORTANT INSTRUCTIONS", margin + 5, yPosition);
     
-  // Hospital Signature
-    const signatory = hospitalSignatories[allocation.hospitalname] || {
+    yPosition += 10;
+    
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    
+    const instructions = [
+        "1. Action should be taken in accordance with the Government Financial Regulations (GFR), Establishment Code, GFR 135 on Delegation of Authority, and relevant instructions of Budget Circular No. 01/2025.",
+        "2. Relevant work subjects should be executed upon approval by your Hospital's Regional Procurement Committee.",
+        "3. Confirm availability of cash flow before entering into commitments, even if the provision has been allocated.",
+        "4. Starting work without provisions should especially be avoided, and expenses exceeding the limit of the allocated provisions should not be incurred.",
+        "5. The provisions granted through this approval will expire on 31.12.2026.",
+        "6. Monthly expenditure reports must be submitted by the Accountant to ddglogisticsmoh@gmail.com before the 10th day of the following month."
+    ];
+    
+    instructions.forEach((instruction, index) => {
+        const lines = doc.splitTextToSize(instruction, contentWidth - 20);
+        doc.text(lines, margin + 10, yPosition);
+        yPosition += lines.length * 4 + 3;
+    });
+    
+    // ========== SIGNATURE SECTION ==========
+    addSignatureSection(doc, margin, yPosition, contentWidth, pageWidth, allocation.hospitalname, allocation, true);
+}
+
+function addSignatureSection(doc, margin, yStart, contentWidth, pageWidth, hospitalName, allocation, isFinal) {
+    let yPosition = yStart + 10;
+    
+    // Signature Section Title
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin, yPosition - 5, pageWidth - margin, yPosition - 5);
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(26, 115, 232);
+    doc.text("AUTHORIZED SIGNATURES", pageWidth / 2, yPosition, { align: 'center' });
+    
+    yPosition += 15;
+    
+    // Two-column layout for signatures
+    const columnWidth = (contentWidth - 20) / 2;
+    
+    // ========== LEFT COLUMN: HOSPITAL AUTHORITY ==========
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text("HOSPITAL AUTHORIZATION", margin + 5, yPosition);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    
+    const hospitalSignatory = hospitalSignatories[hospitalName] || {
         name: '[Hospital Director/Deputy Director General]',
         title: '[Position]',
-        institution: allocation.hospitalname
+        institution: hospitalName
     };
     
-    doc.line(120, yPosition - 15, 180, yPosition - 15);
-    doc.text('Hospital Authorization:', 120, yPosition - 10);
-    yPosition -= 5;
-    doc.setFont(undefined, 'bold');
-    doc.text(signatory.name, 120, yPosition);
-    yPosition += 5;
-    doc.setFont(undefined, 'normal');
-    doc.text(signatory.title, 120, yPosition);
-    yPosition += 5;
-    doc.text(signatory.institution, 120, yPosition);
-
-    // Appropriate signature based on approving authority
-    if (allocation.approvingauthority === 'Deputy Director General (Logistics)') {
-        doc.text('Approval Signature:', 20, yPosition);
-        yPosition += 5;
-        doc.setFont(undefined, 'bold');
-        doc.text('H.M.N Dinipriya Herath', 20, yPosition);
-        yPosition += 5;
-        doc.setFont(undefined, 'normal');
-        doc.text('Deputy Director General (Logistics)', 20, yPosition);
-        yPosition += 5;
-        doc.text('For Secretary', 20, yPosition);
-        yPosition += 15;
-    } else if (allocation.approvingauthority === 'Director Building (Administration)') {
-        doc.text('Approval Signature:', 20, yPosition);
-        yPosition += 5;
-        doc.setFont(undefined, 'bold');
-        doc.text('Director Building Branch', 20, yPosition);
-        yPosition += 5;
-        doc.setFont(undefined, 'normal');
-        doc.text('Director Building Branch (Administration)', 20, yPosition);
-        yPosition += 15;
+    // Signature line
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin + 5, yPosition + 15, margin + columnWidth - 5, yPosition + 15);
+    
+    // Signatory details
+    doc.text(hospitalSignatory.name, margin + 10, yPosition + 25);
+    doc.text(hospitalSignatory.title, margin + 10, yPosition + 30);
+    doc.text(hospitalSignatory.institution, margin + 10, yPosition + 35);
+    
+    // ========== RIGHT COLUMN: MINISTRY AUTHORITY ==========
+    const rightColumnStart = margin + columnWidth + 10;
+    
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text("MINISTRY OF HEALTH APPROVAL", rightColumnStart, yPosition);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    
+    // Signature line
+    doc.line(rightColumnStart, yPosition + 15, rightColumnStart + columnWidth - 5, yPosition + 15);
+    
+    if (isFinal && allocation) {
+        // Show actual approving authority details
+        if (allocation.approvingauthority === 'Deputy Director General (Logistics)') {
+            doc.text("H.M.N Dinipriya Herath", rightColumnStart + 10, yPosition + 25);
+            doc.text("Deputy Director General (Logistics)", rightColumnStart + 10, yPosition + 30);
+            doc.text("For Secretary, Ministry of Health", rightColumnStart + 10, yPosition + 35);
+        } else if (allocation.approvingauthority === 'Director Building (Administration)') {
+            doc.text("H.M.A.M Bandara", rightColumnStart + 10, yPosition + 25);
+            doc.text("Director Building Branch (Administration)", rightColumnStart + 10, yPosition + 30);
+            doc.text("Ministry of Health", rightColumnStart + 10, yPosition + 35);
+        }
+    } else {
+        // Show blank signature area
+        doc.text("[Signature]", rightColumnStart + 10, yPosition + 25);
+        doc.text("[Name & Title]", rightColumnStart + 10, yPosition + 30);
+        doc.text("Ministry of Health", rightColumnStart + 10, yPosition + 35);
     }
     
-  
-    
-    // Copies Section
-    yPosition += 15;
-    doc.setFont(undefined, 'bold');
-    doc.text('Copies:', 20, yPosition);
-    doc.setFont(undefined, 'normal');
-    yPosition += 7;
-    doc.text('1. Accountant (Budget - Control) - For kind information and necessary action (f.k.i. & n.a.)', 22, yPosition);
-    yPosition += 5;
-    doc.text('2. Officer-in-Charge of Subject B02 - For kind information and necessary action (f.k.i. & n.a.)', 22, yPosition);
-    
-    // Footer
+    // Date of approval
+    yPosition += 45;
     doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text('Official Document - Ministry of Health Allocation Distribution System', 105, 287, { align: 'center' });
-    doc.text(`Generated: ${formatDateTime(new Date().toISOString())}`, 105, 291, { align: 'center' });
-    
-    // Save the PDF
-    const fileName = `allocation_approval_${allocation.refnumber}_${allocation.hospitalname.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
-    doc.save(fileName);
-    
-    logSystemActivity('system', currentUserId || 'System', 'Admin Confirmation PDF Downloaded', 
-        `Ref: ${allocation.refnumber}, Hospital: ${allocation.hospitalname}`);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Date: ________________________", rightColumnStart + 10, yPosition);
 }
 
+function addFooterWithQRCode(doc, pageWidth, pageHeight, margin, isFinal, allocation) {
+    const footerY = pageHeight - 25;
+    
+    // Footer line
+    doc.setDrawColor(200, 200, 200);
+    doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
+    
+    // Footer text
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    
+    const refNumber = isFinal ? allocation?.refnumber : document.getElementById('enhancedPdfRefNumber').textContent;
+    const docType = isFinal ? "Approval Certificate" : "Request Form";
+    
+    // Left side: Document info
+    doc.text(`Ref: ${refNumber}`, margin, footerY);
+    doc.text(`Type: ${docType}`, margin, footerY + 4);
+    doc.text(`Page 1 of 1`, margin, footerY + 8);
+    
+    // Center: Disclaimer
+    const disclaimer = "Official Document - Ministry of Health, Sri Lanka";
+    doc.text(disclaimer, pageWidth / 2, footerY, { align: 'center' });
+    doc.text(`Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 
+             pageWidth / 2, footerY + 4, { align: 'center' });
+    
+    // Right side: QR Code
+    const qrX = pageWidth - margin - 20;
+    const qrY = footerY - 20;
+    
+    // Generate QR code content
+    const qrContent = generateQRContent(refNumber, isFinal, allocation);
+    const qrDataURL = generateQRCode(qrContent, 120, 120);
+    
+    if (qrDataURL) {
+        doc.addImage(qrDataURL, 'PNG', qrX, qrY, 18, 18);
+        doc.setFontSize(6);
+        doc.text("Scan for verification", qrX, qrY + 22, { align: 'center' });
+    }
+    
+    // Bottom footer
+    const bottomY = pageHeight - 5;
+    doc.setFontSize(6);
+    doc.text("This is a computer-generated document. No physical signature is required.", 
+             pageWidth / 2, bottomY, { align: 'center' });
+}
+
+function generateQRContent(refNumber, isFinal, allocation) {
+    let content = "MINISTRY OF HEALTH - ALLOCATION SYSTEM\n";
+    content += "=================================\n";
+    content += `Reference: ${refNumber}\n`;
+    content += `Type: ${isFinal ? "Approval Certificate" : "Request Form"}\n`;
+    
+    if (isFinal && allocation) {
+        content += `Hospital: ${allocation.hospitalname}\n`;
+        content += `Status: APPROVED\n`;
+        content += `Amount: ${formatCurrency(allocation.approvedamount)}\n`;
+        content += `Approved By: ${allocation.approvingauthority}\n`;
+        content += `Date: ${formatDate(allocation.approvaldate)}\n`;
+    } else {
+        content += `Status: PENDING APPROVAL\n`;
+        content += `Generated: ${new Date().toLocaleDateString()}\n`;
+    }
+    
+    content += "=================================\n";
+    content += "Verify: https://health.gov.lk/verify";
+    
+    return content;
+}
+
+// Update existing functions to use the new PDF generation
+function downloadPdf() {
+    generateProfessionalPDF(false);
+}
+
+function downloadFinalPdf() {
+    generateProfessionalPDF(true);
+}
+
+// Update the event listeners in the initialization section
+// Add these lines to the existing event listener setup:
+
+// In the initialization or DOMContentLoaded event, update these:
+document.getElementById('downloadPdf')?.addEventListener('click', downloadPdf);
+document.getElementById('downloadFinalPdf')?.addEventListener('click', downloadFinalPdf);
+
+// Also update the PDF preview generation to use the new format
+function updateEnhancedPdfPreview() {
+    // This function updates the on-screen preview to match the new PDF format
+    const preview = document.getElementById('enhancedPdfPreview');
+    
+    if (preview) {
+        // You can add a preview styling that matches the new PDF format
+        preview.style.fontFamily = "'Helvetica', 'Arial', sans-serif";
+        preview.style.border = "2px solid #1a73e8";
+        preview.style.borderRadius = "5px";
+        preview.style.padding = "25px";
+        preview.style.background = "linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%)";
+        preview.style.boxShadow = "0 4px 15px rgba(0, 0, 0, 0.1)";
+        
+        // Update the header to match new design
+        const header = preview.querySelector('.enhanced-pdf-header');
+        if (header) {
+            header.style.background = "linear-gradient(90deg, #1a73e8 0%, #0d47a1 100%)";
+            header.style.color = "white";
+            header.style.padding = "15px";
+            header.style.borderRadius = "3px";
+            header.style.marginBottom = "20px";
+        }
+        
+        // Update sections to have better visual separation
+        const sections = preview.querySelectorAll('.enhanced-pdf-section');
+        sections.forEach(section => {
+            section.style.borderLeft = "4px solid #34a853";
+            section.style.backgroundColor = "#ffffff";
+            section.style.borderRadius = "4px";
+            section.style.padding = "12px";
+            section.style.marginBottom = "10px";
+            section.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)";
+        });
+        
+        // Update signature section
+        const signatureSection = preview.querySelector('.signature-section');
+        if (signatureSection) {
+            signatureSection.style.borderTop = "2px solid #1a73e8";
+            signatureSection.style.paddingTop = "20px";
+            signatureSection.style.marginTop = "30px";
+        }
+    }
+}
+
+// Call this function after updating the preview content
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the preview when allocation is submitted
+    const submitAllocationBtn = document.getElementById('submitAllocation');
+    if (submitAllocationBtn) {
+        submitAllocationBtn.addEventListener('click', function() {
+            setTimeout(updateEnhancedPdfPreview, 500);
+        });
+    }
+    
+    // Also update when viewing allocations
+    const viewButtons = document.querySelectorAll('[onclick*="viewAllocation"], [onclick*="viewMyAllocation"]');
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            setTimeout(updateEnhancedPdfPreview, 500);
+        });
+    });
+});
+
+// Enhanced QR Code generation function
+function generateQRCode(text, width = 120, height = 120) {
+    try {
+        // Use the qrcode-generator library
+        const typeNumber = 0; // Auto type
+        const errorCorrectionLevel = 'L'; // Low error correction (can recover 7% damage)
+        const qr = qrcode(typeNumber, errorCorrectionLevel);
+        qr.addData(text);
+        qr.make();
+        
+        // Create canvas for QR code
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Get QR code modules
+        const moduleCount = qr.getModuleCount();
+        const cellSize = Math.min(width, height) / moduleCount;
+        
+        // Clear canvas
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Draw QR code
+        ctx.fillStyle = '#000000';
+        for (let row = 0; row < moduleCount; row++) {
+            for (let col = 0; col < moduleCount; col++) {
+                if (qr.isDark(row, col)) {
+                    ctx.fillRect(
+                        col * cellSize,
+                        row * cellSize,
+                        cellSize,
+                        cellSize
+                    );
+                }
+            }
+        }
+        
+        // Add Ministry logo in center (optional)
+        ctx.fillStyle = '#1a73e8';
+        ctx.fillRect(
+            width/2 - cellSize*2,
+            height/2 - cellSize*2,
+            cellSize*4,
+            cellSize*4
+        );
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `${cellSize*2}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('MOH', width/2, height/2);
+        
+        return canvas.toDataURL('image/png');
+    } catch (error) {
+        console.error('QR Code generation failed:', error);
+        
+        // Fallback: Create simple text-based QR
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        ctx.fillStyle = '#1a73e8';
+        ctx.font = 'bold 10px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('MOH', width/2, height/2);
+        ctx.font = '8px Arial';
+        ctx.fillText('QR Code', width/2, height/2 + 15);
+        
+        return canvas.toDataURL('image/png');
+    }
+}
 // Event Listeners
 document.addEventListener('DOMContentLoaded', function() {
     initializeLocalStorage();
