@@ -5624,11 +5624,6 @@ function addFinalApprovalContent(doc, allocation, margin, yStart, contentWidth, 
     doc.text(allocation.votenumber, margin + 40, yPosition);
     doc.setFont('helvetica', 'normal');
     
-    doc.text(`Priority:`, pageWidth / 2, yPosition);
-    doc.setFont('helvetica', 'bold');
-    doc.text(allocation.prioritylevel, pageWidth / 2 + 25, yPosition);
-    doc.setFont('helvetica', 'normal');
-    
     yPosition += 7;
     
     // Amount Information
