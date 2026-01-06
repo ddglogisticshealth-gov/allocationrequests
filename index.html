@@ -5182,13 +5182,15 @@ function addRequestContent(doc, allocation, margin, yPosition, contentWidth, pag
     doc.setTextColor(0, 0, 0);
     
     const instructions = [
-        "I. Action should be taken in accordance with the Government Financial Regulations (GFR), Establishment Code, GFR 135 on Delegation of Authority, other laws and regulations.",
-        "II. The relevant work subjects should be executed upon approval by your Hospital's Regional Procurement Committee.",
-        "III. Confirm the availability of cash flow before entering into commitments.",
-        "IV. Starting work without provisions should especially be avoided.",
-        "V. The provisions granted through this letter will expire on 31.12.2026.",
-        "VI. Monthly expenditure reports must be submitted before the 10th day of the following month."
-    ];
+    "I. Action shall be taken strictly in accordance with the Government Financial Regulations (GFR), Establishments Code, GFR 135 on Delegation of Authority, and all other applicable laws and regulations.",
+    "II. The relevant works shall be executed only after obtaining approval from your Hospital’s Regional Procurement Committee.",
+    "III. The availability of adequate cash flow shall be confirmed prior to entering into any financial commitments.",
+    "IV. Commencement of any work without the necessary financial provisions shall be strictly avoided.",
+    "V. The provisions granted under this letter shall remain valid until 31.12.2026.",
+    "VI. Monthly expenditure reports shall be submitted on or before the 10th day of the following month to the email address ddglogisticsmoh@gmail.com.",
+    "VII. This is an electronically generated PDF and does not require a physical signature."
+];
+
     
     instructions.forEach((instruction, index) => {
         if (yPosition > pageHeight - 50) {
@@ -6191,3 +6193,4 @@ const loginInputs = [
     </script>
 </body>
 </html>
+
