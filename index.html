@@ -1337,7 +1337,39 @@
                 padding: 10px 14px;
                 font-size: 14px;
             }
+
+		/* Additional Notes highlight in approval modal */
+.additional-notes-highlight {
+    background-color: #fff5f5;
+    border: 2px solid #ea4335;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 2px 8px rgba(234, 67, 53, 0.2);
+}
+
+.additional-notes-highlight .notes-label {
+    color: #ea4335;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.additional-notes-highlight .notes-content {
+    color: #333;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.additional-notes-highlight .notes-empty {
+    color: #999;
+    font-style: italic;
+}
         }
+
+
 
     </style>
 </head>
@@ -2417,17 +2449,21 @@
                 </div>
                 
                 <div class="form-section">
-                    <h4 class="section-title">Allocation Details</h4>
-                    <div class="enhanced-pdf-section">
-                        <div><strong>Reference:</strong> <span id="approvalRefNumber"></span></div>
-                        <div><strong>Hospital:</strong> <span id="approvalHospital"></span></div>
-                        <div><strong>Vote Number:</strong> <span id="approvalVoteNumber"></span></div>
-                        <div><strong>Job Description:</strong> <span id="approvalJobDescription"></span></div>
-                        <div><strong>Requested Amount:</strong> <span id="approvalRequestedAmount"></span></div>
-                        <div><strong>Priority:</strong> <span id="approvalPriority"></span></div>
-                    </div>
-                </div>
-                
+    <h4 class="section-title">Allocation Details</h4>
+    <div class="enhanced-pdf-section">
+        <div><strong>Reference:</strong> <span id="approvalRefNumber"></span></div>
+        <div><strong>Hospital:</strong> <span id="approvalHospital"></span></div>
+        <div><strong>Vote Number:</strong> <span id="approvalVoteNumber"></span></div>
+        <div><strong>Job Description:</strong> <span id="approvalJobDescription"></span></div>
+        <div><strong>Requested Amount:</strong> <span id="approvalRequestedAmount"></span></div>
+        <div><strong>Priority:</strong> <span id="approvalPriority"></span></div>
+        <!-- ADDED: Additional Notes with red highlighting -->
+        <div style="margin-top: 10px; padding: 10px; background-color: #ffebee; border-left: 4px solid #ea4335; border-radius: 4px;">
+            <strong style="color: #ea4335;">Additional Notes from Request:</strong>
+            <div id="approvalAdditionalNotes" style="color: #333; margin-top: 5px; font-size: 14px;"></div>
+        </div>
+    </div>
+</div>                
                 <div class="form-section">
                     <h4 class="section-title">Approval Details</h4>
                     <div class="form-group">
@@ -2961,8 +2997,8 @@ const hospitalSignatories = {
         institution: 'Teaching Hospital Badulla'
     },
     'Ministry of Health': { 
-        name: 'H.M.A.M Bandara', 
-        title: 'Director Building (Administration)',
+        name: 'H.M.N Dinipriya Herath', 
+        title: 'Deputy Director General (Logistics)',
         institution: 'Ministry of Health'
     }
 };
@@ -4568,7 +4604,6 @@ function populateLogHospitalFilter() {
     });
 }
 
-// Modal Functions
 function openApprovalModal(requestId) {
     currentRequestId = requestId;
     const allocation = allAllocations.find(a => a.id === requestId);
@@ -4581,6 +4616,16 @@ function openApprovalModal(requestId) {
         document.getElementById('approvalRequestedAmount').textContent = formatCurrency(allocation.requiredamount);
         document.getElementById('approvalPriority').textContent = allocation.prioritylevel;
         
+        // ADDED: Populate Additional Notes
+        const additionalNotesElement = document.getElementById('approvalAdditionalNotes');
+        if (allocation.additionalnotes && allocation.additionalnotes.trim() !== '') {
+            additionalNotesElement.textContent = allocation.additionalnotes;
+        } else {
+            additionalNotesElement.textContent = 'No additional notes provided.';
+            additionalNotesElement.style.color = '#999';
+            additionalNotesElement.style.fontStyle = 'italic';
+        }
+        
         document.getElementById('approvedAmount').value = allocation.requiredamount;
         document.getElementById('approvalNotes').value = '';
         document.getElementById('approvingAuthority').value = '';
@@ -4589,7 +4634,6 @@ function openApprovalModal(requestId) {
         showElement(document.getElementById('approvalModal'));
     }
 }
-
 function openRejectionModal(requestId) {
     currentRequestId = requestId;
     const allocation = allAllocations.find(a => a.id === requestId);
@@ -5143,7 +5187,7 @@ function addRequestContent(doc, allocation, margin, yPosition, contentWidth, pag
         "III. Confirm the availability of cash flow before entering into commitments.",
         "IV. Starting work without provisions should especially be avoided.",
         "V. The provisions granted through this letter will expire on 31.12.2026.",
-        "VI. Monthly expenditure reports must be submitted before the 10th day of the following month(ddglogisticsmoh@gmail.com)."
+        "VI. Monthly expenditure reports must be submitted before the 10th day of the following month."
     ];
     
     instructions.forEach((instruction, index) => {
