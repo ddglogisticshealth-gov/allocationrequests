@@ -3174,7 +3174,19 @@ function generateUniquePassword() {
 }
 
 function formatCurrency(amount) {
-    return 'LKR ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // Convert to number first
+    let num = parseFloat(amount);
+    
+    // Check if it's a valid number
+    if (isNaN(num)) {
+        return 'LKR 0';
+    }
+    
+    // Format with 2 decimal places and commas for thousands
+    return 'LKR ' + num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 }
 
 // Enhanced Status Display Functions
@@ -6193,6 +6205,7 @@ const loginInputs = [
     </script>
 </body>
 </html>
+
 
 
 
