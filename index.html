@@ -9,6 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
        /* ========== CSS VARIABLES ========== */
 :root {
@@ -5164,6 +5166,9 @@ function generateProfessionalPDF(isFinal = false) {
     // ========== SIGNATURES ==========
     yPosition = addSignatures(doc, allocation, margin, yPosition, contentWidth, pageWidth, pageHeight, isFinal);
     
+    // ========== COPIES NOTE ==========
+    yPosition = addCopiesNote(doc, allocation, margin, yPosition, contentWidth, pageWidth, pageHeight, isFinal);
+    
     // ========== FOOTER WITH QR CODE ==========
     addFooterWithQRCode(doc, pageWidth, pageHeight, margin, isFinal, allocation);
     
@@ -5333,7 +5338,7 @@ function addRequestContent(doc, allocation, margin, yPosition, contentWidth, pag
     
     const instructions = [
     "I. Action shall be taken strictly in accordance with the Government Financial Regulations (GFR), Establishments Code, GFR 135 on Delegation of Authority, and all other applicable laws and regulations.",
-    "II. The relevant works shall be executed only after obtaining approval from your Hospital’s Regional Procurement Committee.",
+    "II. The relevant works shall be executed only after obtaining approval from your Hospital's Regional Procurement Committee.",
     "III. The availability of adequate cash flow shall be confirmed prior to entering into any financial commitments.",
     "IV. Commencement of any work without the necessary financial provisions shall be strictly avoided.",
     "V. The provisions granted under this letter shall remain valid until 31.12.2026.",
@@ -5469,6 +5474,51 @@ function addSignatures(doc, allocation, margin, yPosition, contentWidth, pageWid
     return yPosition + 20;
 }
 
+function addCopiesNote(doc, allocation, margin, yPosition, contentWidth, pageWidth, pageHeight, isFinal) {
+    // Check if we need a new page before adding the copies note
+    if (yPosition > pageHeight - 60) {
+        doc.addPage();
+        yPosition = margin;
+    }
+    
+    // Only add copies note for final approval documents
+    if (isFinal) {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text("Copies:", margin + 5, yPosition);
+        
+        yPosition += 7;
+        
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        
+        const copies = [
+            "1. Accountant (Budget - Control) - For kind information and necessary action (f.k.i. & n.a.)",
+            "2. Officer-in-Charge of Subject B02 - For kind information and necessary action (f.k.i. & n.a.)"
+        ];
+        
+        copies.forEach(copy => {
+            if (yPosition > pageHeight - 50) {
+                doc.addPage();
+                yPosition = margin;
+                doc.setFontSize(9);
+            }
+            
+            // Split long text if needed
+            const lines = doc.splitTextToSize(copy, contentWidth - 20);
+            lines.forEach(line => {
+                doc.text(line, margin + 10, yPosition);
+                yPosition += 5;
+            });
+        });
+        
+        yPosition += 10; // Add some spacing after the copies note
+    }
+    
+    return yPosition;
+}
+
+// FIXED QR CODE FUNCTION
 function addFooterWithQRCode(doc, pageWidth, pageHeight, margin, isFinal, allocation) {
     const footerY = pageHeight - 30;
     
@@ -5478,21 +5528,96 @@ function addFooterWithQRCode(doc, pageWidth, pageHeight, margin, isFinal, alloca
     doc.text("Official Document - Ministry of Health, Sri Lanka", pageWidth / 2, footerY, { align: 'center' });
     doc.text("This is a system generated document", pageWidth / 2, footerY + 5, { align: 'center' });
     
-    // QR Code (optional - can be commented out if causing issues)
+    // QR Code Generation - FIXED VERSION
     try {
+        // Generate QR code text
         const qrText = isFinal ? 
-            `Approval: ${allocation?.refnumber || ''}\nDate: ${allocation?.approvaldate ? new Date(allocation.approvaldate).toLocaleDateString('en-GB') : ''}\nAmount: LKR ${allocation?.approvedamount || allocation?.requiredamount || ''}` :
-            `Request: ${allocation?.refnumber || ''}\nHospital: ${allocation?.hospitalname || ''}\nDate: ${allocation?.timestamp ? new Date(allocation.timestamp).toLocaleDateString('en-GB') : ''}`;
+            `Approval: ${allocation?.refnumber || ''}
+Date: ${allocation?.approvaldate ? new Date(allocation.approvaldate).toLocaleDateString('en-GB') : ''}
+Amount: LKR ${allocation?.approvedamount || allocation?.requiredamount || ''}
+Status: ${allocation?.status || 'Approved'}` :
+            `Request: ${allocation?.refnumber || ''}
+Hospital: ${allocation?.hospitalname || ''}
+Date: ${allocation?.timestamp ? new Date(allocation.timestamp).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB')}
+Amount: LKR ${allocation?.requiredamount || ''}`;
         
-        const qrcode = qrcode(0, 'L');
-        qrcode.addData(qrText);
-        qrcode.make();
-        const qrDataURL = qrcode.createDataURL(4, 0);
-        
-        doc.addImage(qrDataURL, 'PNG', pageWidth - margin - 30, footerY - 25, 25, 25);
+        // Check if QRCode library is available
+        if (typeof QRCode !== 'undefined') {
+            // Method 1: Using QRCode library if available
+            const qrSize = 20;
+            const qrX = pageWidth - margin - qrSize - 5;
+            const qrY = footerY - qrSize - 5;
+            
+            // Create canvas for QR code
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            
+            // Generate QR code
+            QRCode.toCanvas(canvas, qrText, {
+                width: 128,
+                margin: 1,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            }, function(error) {
+                if (!error) {
+                    // Convert canvas to data URL
+                    const qrDataURL = canvas.toDataURL('image/png');
+                    // Add to PDF
+                    doc.addImage(qrDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
+                } else {
+                    console.error('QR Code generation error:', error);
+                    addFallbackQR(doc, qrText, qrX, qrY, qrSize);
+                }
+            });
+        } else if (typeof qrcode !== 'undefined') {
+            // Method 2: Using older qrcode library
+            const qrSize = 20;
+            const qrX = pageWidth - margin - qrSize - 5;
+            const qrY = footerY - qrSize - 5;
+            
+            const qr = qrcode(0, 'L');
+            qr.addData(qrText);
+            qr.make();
+            const qrDataURL = qr.createDataURL(4, 0);
+            doc.addImage(qrDataURL, 'PNG', qrX, qrY, qrSize, qrSize);
+        } else {
+            console.warn('No QR code library available');
+            addFallbackQR(doc, qrText, pageWidth - margin - 25, footerY - 25, 20);
+        }
     } catch (e) {
         console.log('QR Code skipped:', e.message);
+        // Add fallback text
+        doc.setFontSize(6);
+        doc.setTextColor(150, 150, 150);
+        doc.text("QR Code Unavailable", pageWidth - margin - 15, footerY - 10, { align: 'center' });
     }
+}
+
+// Fallback function if QR code generation fails
+function addFallbackQR(doc, text, x, y, size) {
+    // Draw a simple QR placeholder
+    doc.setDrawColor(100, 100, 100);
+    doc.setFillColor(255, 255, 255);
+    doc.rect(x, y, size, size, 'FD');
+    
+    // Draw grid pattern
+    doc.setFillColor(0, 0, 0);
+    const cellSize = size / 7;
+    for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 7; j++) {
+            if ((i + j) % 2 === 0) {
+                doc.rect(x + i * cellSize, y + j * cellSize, cellSize, cellSize, 'F');
+            }
+        }
+    }
+    
+    // Add text
+    doc.setFontSize(4);
+    doc.setTextColor(100, 100, 100);
+    doc.text("QR", x + size/2, y + size/2, { align: 'center' });
 }
 
 function addPageNumbers(doc, pageWidth, pageHeight) {
@@ -5505,7 +5630,6 @@ function addPageNumbers(doc, pageWidth, pageHeight) {
         doc.text(`Page ${i} of ${totalPages}`, pageWidth - 30, pageHeight - 10);
     }
 }
-
 // Update the download PDF button event listeners
 document.getElementById('downloadPdf')?.addEventListener('click', function() {
     generateProfessionalPDF(false);
