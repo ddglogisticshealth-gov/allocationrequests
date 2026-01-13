@@ -1793,7 +1793,10 @@ tr.highlight-rejected:hover {
                                     <div class="enhanced-pdf-value">Pending Approval</div>
                                 </div>
                             </div>
-                            
+                            <div class="enhanced-pdf-section">
+   			    <div class="enhanced-pdf-label">Approval Date:</div>
+    			   <div class="enhanced-pdf-value" id="viewApprovalDate">N/A</div>
+			  </div>
                             <!-- Add Important Instructions Section -->
                             <div class="enhanced-pdf-section" style="grid-column: 1 / -1;">
                                 <div class="enhanced-pdf-label">Important Instructions:</div>
@@ -2609,6 +2612,13 @@ tr.highlight-rejected:hover {
                     </div>
                 </div>
             </div>
+
+		<!-- Add this in the approval modal body, after the approving authority field -->
+<div class="form-group">
+    <label class="form-label" for="approvalDate">Approval Date *</label>
+    <input type="date" id="approvalDate" class="form-control" required>
+</div>
+
             <div class="modal-footer">
                 <button id="rejectRequest" class="btn btn-danger">Reject Request</button>
                 <button id="confirmApproval" class="btn">Approve Request</button>
@@ -3492,38 +3502,39 @@ function getMockData(action, data) {
             const storedAllocations = JSON.parse(localStorage.getItem('allocations') || '[]');
             return { allocations: storedAllocations };
         
-        case 'approveAllocation':
-            let allAllocationsData = JSON.parse(localStorage.getItem('allocations') || '[]');
-            
-            const allocationIndex = allAllocationsData.findIndex(a => a.id == data.requestId);
-            
-            if (allocationIndex === -1) {
-                return { success: false, error: 'Allocation not found' };
-            }
-            
-            const storedPassword = allAllocationsData[allocationIndex].uniquepassword;
-            const enteredPassword = data.uniquePassword;
-            
-            if (!storedPassword || !enteredPassword) {
-                return { success: false, error: 'Password is required' };
-            }
-            
-            if (storedPassword.toUpperCase() !== enteredPassword.toUpperCase()) {
-                return { success: false, error: 'Invalid request password. Please check and try again.' };
-            }
-            
-            allAllocationsData[allocationIndex].approvedamount = data.approvedAmount;
-            allAllocationsData[allocationIndex].approvingauthority = data.approvingAuthority;
-            allAllocationsData[allocationIndex].approvalnotes = data.approvalNotes || '';
-            allAllocationsData[allocationIndex].status = 'Approved';
-            allAllocationsData[allocationIndex].approvaldate = new Date().toISOString();
-            
-            localStorage.setItem('allocations', JSON.stringify(allAllocationsData));
-            
-            logSystemActivity('approval', 'Administrator', 'Allocation Approved', 
-                `Request: ${allAllocationsData[allocationIndex].refnumber}, Amount: ${data.approvedAmount}, Authority: ${data.approvingAuthority}`);
-            
-            return { success: true, message: 'Allocation approved successfully' };
+       case 'approveAllocation':
+    let allAllocationsData = JSON.parse(localStorage.getItem('allocations') || '[]');
+    
+    const allocationIndex = allAllocationsData.findIndex(a => a.id == data.requestId);
+    
+    if (allocationIndex === -1) {
+        return { success: false, error: 'Allocation not found' };
+    }
+    
+    const storedPassword = allAllocationsData[allocationIndex].uniquepassword;
+    const enteredPassword = data.uniquePassword;
+    
+    if (!storedPassword || !enteredPassword) {
+        return { success: false, error: 'Password is required' };
+    }
+    
+    if (storedPassword.toUpperCase() !== enteredPassword.toUpperCase()) {
+        return { success: false, error: 'Invalid request password. Please check and try again.' };
+    }
+    
+    allAllocationsData[allocationIndex].approvedamount = data.approvedAmount;
+    allAllocationsData[allocationIndex].approvingauthority = data.approvingAuthority;
+    allAllocationsData[allocationIndex].approvalnotes = data.approvalNotes || '';
+    allAllocationsData[allocationIndex].status = 'Approved';
+    // Use provided approval date or current date
+    allAllocationsData[allocationIndex].approvaldate = data.approvalDate || new Date().toISOString();
+    
+    localStorage.setItem('allocations', JSON.stringify(allAllocationsData));
+    
+    logSystemActivity('approval', 'Administrator', 'Allocation Approved', 
+        `Request: ${allAllocationsData[allocationIndex].refnumber}, Amount: ${data.approvedAmount}, Authority: ${data.approvingAuthority}, Date: ${data.approvalDate}`);
+    
+    return { success: true, message: 'Allocation approved successfully' };
         
         case 'rejectAllocation':
             let rejectAllocations = JSON.parse(localStorage.getItem('allocations') || '[]');
@@ -4782,10 +4793,16 @@ function openApprovalModal(requestId) {
         document.getElementById('approvalNotes').value = '';
         document.getElementById('approvingAuthority').value = '';
         document.getElementById('uniquePassword').value = allocation.uniquepassword || '';
+        
+        // ADDED: Set approval date to current date
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        document.getElementById('approvalDate').value = formattedDate;
 
         showElement(document.getElementById('approvalModal'));
     }
 }
+
 function openRejectionModal(requestId) {
     currentRequestId = requestId;
     const allocation = allAllocations.find(a => a.id === requestId);
@@ -4808,6 +4825,7 @@ async function approveAllocation() {
     const approvedAmount = document.getElementById('approvedAmount').value.trim();
     const approvalNotes = document.getElementById('approvalNotes').value.trim();
     const approvingAuthority = document.getElementById('approvingAuthority').value;
+    const approvalDate = document.getElementById('approvalDate').value; // ADDED
     
     if (!uniquePassword) {
         alert('Please enter the request password');
@@ -4824,6 +4842,11 @@ async function approveAllocation() {
         return;
     }
     
+    if (!approvalDate) { // ADDED
+        alert('Please select the approval date');
+        return;
+    }
+    
     const confirmApprovalBtn = document.getElementById('confirmApproval');
     confirmApprovalBtn.disabled = true;
     
@@ -4833,6 +4856,7 @@ async function approveAllocation() {
             approvedAmount: approvedAmount,
             approvalNotes: approvalNotes,
             approvingAuthority: approvingAuthority,
+            approvalDate: approvalDate, // ADDED
             uniquePassword: uniquePassword
         });
         
@@ -5424,51 +5448,57 @@ function addSignatures(doc, allocation, margin, yPosition, contentWidth, pageWid
         yPosition = margin;
     }
     
-    // Hospital Signature
-    const signatory = hospitalSignatories[allocation.hospitalname] || {
-        name: '[Hospital Director/Deputy Director General]',
-        title: '[Position]',
-        institution: allocation.hospitalname || ''
-    };
-    
-    // Left side - Hospital Signature
-    doc.setDrawColor(0, 0, 0);
-    doc.line(margin + 20, yPosition, margin + 100, yPosition);
-    
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text("Hospital Authorization:", margin + 20, yPosition + 10);
-    
-    doc.setFont('helvetica', 'normal');
-    doc.text(signatory.name, margin + 20, yPosition + 17);
-    
-    doc.setFontSize(9);
-    doc.text(signatory.title, margin + 20, yPosition + 22);
-    doc.text(signatory.institution, margin + 20, yPosition + 27);
-    
-    yPosition += 40;
-    
-    if (isFinal && allocation.status === 'Approved') {
-        // Right side - Approval Signature
+    // Only show hospital signature for request forms (not final)
+    if (!isFinal) {
+        // Hospital Signature
+        const signatory = hospitalSignatories[allocation.hospitalname] || {
+            name: '[Hospital Director/Deputy Director General]',
+            title: '[Position]',
+            institution: allocation.hospitalname || ''
+        };
+        
+        // Left side - Hospital Signature
         doc.setDrawColor(0, 0, 0);
-        doc.line(pageWidth - margin - 100, yPosition - 40, pageWidth - margin - 20, yPosition - 40);
+        doc.line(margin + 20, yPosition, margin + 100, yPosition);
         
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
-        doc.text("Approval Signature:", pageWidth - margin - 100, yPosition - 30);
+        doc.text("Hospital Authorization:", margin + 20, yPosition + 10);
+        
+        doc.setFont('helvetica', 'normal');
+        doc.text(signatory.name, margin + 20, yPosition + 17);
+        
+        doc.setFontSize(9);
+        doc.text(signatory.title, margin + 20, yPosition + 22);
+        doc.text(signatory.institution, margin + 20, yPosition + 27);
+        
+        yPosition += 40;
+    }
+    
+    // Only show approval signature for final approved documents
+    if (isFinal && allocation.status === 'Approved') {
+        // Left side - Approval Signature
+        doc.setDrawColor(0, 0, 0);
+        doc.line(margin + 20, yPosition, margin + 100, yPosition);
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text("Approval Signature:", margin + 20, yPosition + 10);
         
         doc.setFont('helvetica', 'normal');
         
         if (allocation.approvingauthority === 'Deputy Director General (Logistics)') {
-            doc.text("H.M.N Dinipriya Herath", pageWidth - margin - 100, yPosition - 23);
+            doc.text("H.M.N Dinipriya Herath", margin + 20, yPosition + 17);
             doc.setFontSize(9);
-            doc.text("Deputy Director General (Logistics)", pageWidth - margin - 100, yPosition - 18);
-            doc.text("For Secretary", pageWidth - margin - 100, yPosition - 13);
+            doc.text("Deputy Director General (Logistics)", margin + 20, yPosition + 22);
+            doc.text("For Secretary", margin + 20, yPosition + 27);
         } else if (allocation.approvingauthority === 'Director Building (Administration)') {
-            doc.text("Director Building Branch", pageWidth - margin - 100, yPosition - 23);
+            doc.text("Director Building Branch", margin + 20, yPosition + 17);
             doc.setFontSize(9);
-            doc.text("Director Building Branch (Administration)", pageWidth - margin - 100, yPosition - 18);
+            doc.text("Director Building Branch (Administration)", margin + 20, yPosition + 22);
         }
+        
+        yPosition += 40;
     }
     
     return yPosition + 20;
@@ -6467,6 +6497,7 @@ const loginInputs = [
     </script>
 </body>
 </html>
+
 
 
 
