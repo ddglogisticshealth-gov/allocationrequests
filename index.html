@@ -1559,7 +1559,55 @@ tr:last-child td {
     }
 }        
 
+/* Export Notification Styles */
+.export-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    display: none;
+    animation: slideUp 0.3s ease-out;
+    border-left: 4px solid var(--secondary);
+}
 
+.export-notification.notification-success {
+    border-left-color: var(--secondary);
+}
+
+.export-notification.notification-info {
+    border-left-color: var(--info);
+}
+
+.export-notification .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.export-notification .notification-content i {
+    font-size: 20px;
+    color: var(--secondary);
+}
+
+.export-notification.notification-info .notification-content i {
+    color: var(--info);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 
     </style>
 </head>
@@ -1906,27 +1954,31 @@ tr:last-child td {
                 </div>
                 
                 <!-- My Requests Tab -->
-                <div id="myRequestsTab" class="user-tab-content hidden">
-                    <div class="admin-controls">
-                        <div class="filter-control">
-                            <label class="form-label" for="myRequestsStatusFilter">Filter by Status</label>
-                            <select id="myRequestsStatusFilter" class="form-control">
-                                <option value="all">All Requests</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Rejected">Rejected</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
-                        <div class="search-control filter-control">
-                            <label class="form-label" for="searchMyRequests">Search My Requests</label>
-                            <div class="search-container">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="searchMyRequests" class="form-control" placeholder="Search by reference or vote number">
-                            </div>
-                        </div>
-                    </div>
-                    
+                <div class="admin-controls">
+    <div class="filter-control">
+        <label class="form-label" for="myRequestsStatusFilter">Filter by Status</label>
+        <select id="myRequestsStatusFilter" class="form-control">
+            <option value="all">All Requests</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+            <option value="Completed">Completed</option>
+        </select>
+    </div>
+    <div class="search-control filter-control">
+        <label class="form-label" for="searchMyRequests">Search My Requests</label>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchMyRequests" class="form-control" placeholder="Search by reference or vote number">
+        </div>
+    </div>
+    <!-- ADD THIS BUTTON -->
+    <div class="filter-control" style="display: flex; align-items: flex-end;">
+        <button id="exportMyRequestsExcel" class="btn" style="width: 100%;">
+            <i class="fas fa-file-excel"></i> Export to Excel
+        </button>
+    </div>
+</div>                    
                     <div class="requests-table">
                         <div class="table-header">
                             <div class="table-title">My Allocation Requests</div>
@@ -4006,6 +4058,10 @@ async function loadMyRequests() {
     try {
         const allocationsResult = await callGoogleAppsScript('getAllocations');
         const myAllocations = allocationsResult.allocations.filter(allocation => allocation.hospitalId === currentUserId) || [];
+        
+        // Store in global variable for export use
+        window.hospitalAllocations = myAllocations;
+        
         filteredMyRequests = myAllocations;
         displayMyRequests();
         updateMyRequestsPagination();
@@ -4516,6 +4572,158 @@ function exportVoteDistributionToExcel() {
     document.body.removeChild(link);
     
     logSystemActivity('report', currentUserId, 'Vote Distribution Exported', `Year: ${yearFilter}`);
+}
+
+// Export Hospital My Requests to Excel
+function exportMyRequestsToExcel() {
+    const hospitalName = currentUserId || 'Hospital';
+    const statusFilter = document.getElementById('myRequestsStatusFilter').value;
+    const searchTerm = document.getElementById('searchMyRequests').value.toLowerCase();
+    
+    // Get data from the correct source
+    let myAllocations = [];
+    
+    if (window.hospitalAllocations && window.hospitalAllocations.length > 0) {
+        // Use cached hospital allocations
+        myAllocations = window.hospitalAllocations;
+    } else if (filteredMyRequests.length > 0) {
+        // Use filtered requests
+        myAllocations = filteredMyRequests;
+    } else {
+        // Try to fetch from localStorage
+        const allStoredAllocations = JSON.parse(localStorage.getItem('allocations') || '[]');
+        myAllocations = allStoredAllocations.filter(allocation => allocation.hospitalId === currentUserId);
+    }
+    
+    if (myAllocations.length === 0) {
+        alert('No allocation requests found. Please submit at least one request first.');
+        return;
+    }
+    
+    // Apply same filters as in filterMyRequests()
+    let filteredData = [...myAllocations];
+    
+    if (statusFilter !== 'all') {
+        filteredData = filteredData.filter(allocation => allocation.status === statusFilter);
+    }
+    
+    if (searchTerm) {
+        filteredData = filteredData.filter(allocation => 
+            (allocation.refnumber && allocation.refnumber.toLowerCase().includes(searchTerm)) ||
+            (allocation.votenumber && allocation.votenumber.toLowerCase().includes(searchTerm)) ||
+            (allocation.jobdescription && allocation.jobdescription.toLowerCase().includes(searchTerm))
+        );
+    }
+    
+    if (filteredData.length === 0) {
+        alert(`No data matches your current filter. ${myAllocations.length} total requests available.`);
+        return;
+    }
+    
+    // Create CSV content
+    const headers = [
+        'Reference Number',
+        'Vote Number',
+        'Job Description',
+        'Requested Amount (LKR)',
+        'Approved Amount (LKR)',
+        'Priority Level',
+        'Status',
+        'Submission Date',
+        'Required Date',
+        'Contact Person',
+        'Contact Phone',
+        'Contact Email',
+        'Additional Notes',
+        'Approving Authority',
+        'Approval Date',
+        'Approval Notes',
+        'Rejection Reason'
+    ];
+    
+    const csvRows = [
+        headers.join(','),
+        ...filteredData.map(allocation => {
+            return [
+                `"${allocation.refnumber || ''}"`,
+                `"${allocation.votenumber || ''}"`,
+                `"${(allocation.jobdescription || '').replace(/"/g, '""')}"`,
+                allocation.requiredamount || 0,
+                allocation.approvedamount || 0,
+                `"${allocation.prioritylevel || ''}"`,
+                `"${allocation.status || ''}"`,
+                `"${formatDate(allocation.timestamp)}"`,
+                `"${formatDate(allocation.requireddate)}"`,
+                `"${allocation.contactperson || ''}"`,
+                `"${allocation.contactphone || ''}"`,
+                `"${allocation.contactemail || ''}"`,
+                `"${(allocation.additionalnotes || '').replace(/"/g, '""')}"`,
+                `"${allocation.approvingauthority || ''}"`,
+                `"${allocation.approvaldate ? formatDate(allocation.approvaldate) : ''}"`,
+                `"${(allocation.approvalnotes || '').replace(/"/g, '""')}"`,
+                `"${(allocation.rejectionreason || '').replace(/"/g, '""')}"`
+            ].join(',');
+        })
+    ];
+    
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    const timestamp = new Date().toISOString().split('T')[0];
+    const sanitizedHospitalName = hospitalName.replace(/[^a-zA-Z0-9]/g, '_');
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${sanitizedHospitalName}_Allocation_Requests_${timestamp}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Log the action
+    logSystemActivity('export', currentUserId, 'Excel Export', 
+        `Hospital exported ${filteredData.length} requests to Excel`);
+    
+    // Show success message
+    showExportNotification(`Successfully exported ${filteredData.length} requests to Excel`);
+}
+
+// Show export notification
+function showExportNotification(message) {
+    // Remove existing notification if any
+    const existingNotification = document.querySelector('.export-notification');
+    if (existingNotification) {
+        document.body.removeChild(existingNotification);
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = 'export-notification notification-success';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Show notification
+    setTimeout(() => {
+        notification.style.display = 'block';
+    }, 10);
+    
+    // Hide after 3 seconds
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
 }
 
 // Admin Functions
@@ -6399,6 +6607,9 @@ async function loadSystemLogs() {
 document.addEventListener('DOMContentLoaded', function() {
     initializeLocalStorage();
     
+    // Add this with other event listeners
+document.getElementById('exportMyRequestsExcel')?.addEventListener('click', exportMyRequestsToExcel);
+
     // Role selector
     document.querySelectorAll('.role-option').forEach(option => {
         option.addEventListener('click', function() {
@@ -6686,7 +6897,6 @@ const loginInputs = [
     </script>
 </body>
 </html>
-
 
 
 
