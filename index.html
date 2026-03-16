@@ -37,10 +37,6 @@
     --border-radius-lg: 12px;
     --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.hidden { display: none !important; }
-    .user-msg { margin-bottom: 15px; background: #1a5f7a; color: white; padding: 12px; border-radius: 15px 15px 0 15px; font-size: 14px; max-width: 85%; margin-left: auto; text-align: right; }
-    #chat-content::-webkit-scrollbar { width: 5px; }
-    #chat-content::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 /* ========== RESET & BASE ========== */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter','Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; }
@@ -1555,42 +1551,6 @@ tr:last-child td { border-bottom: none; }
         </div>
     </div>
 
-	<div id="adv-chatbot-container" style="position: fixed; bottom: 30px; right: 30px; z-index: 10000; font-family: 'Inter', sans-serif;">
-    <button id="chatbot-launcher" style="width: 65px; height: 65px; border-radius: 50%; background: #1a5f7a; color: white; border: none; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: transform 0.3s ease;">
-        <i class="fas fa-robot" style="font-size: 28px;"></i>
-    </button>
-
-    <div id="chatbot-panel" class="hidden" style="position: absolute; bottom: 85px; right: 0; width: 380px; max-height: 550px; background: white; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0; transition: all 0.3s ease;">
-        <div style="background: linear-gradient(135deg, #1a5f7a, #004b63); color: white; padding: 20px; font-weight: 600;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h4 style="margin: 0; font-size: 16px;">ADS සහායක මධ්‍යස්ථානය</h4>
-                    <small style="opacity: 0.8; font-weight: 400;">සෑම විටම ඔබ සමඟයි</small>
-                </div>
-                <button id="close-chat" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 20px;"><i class="fas fa-times"></i></button>
-            </div>
-        </div>
-
-        <div id="chat-content" style="flex: 1; padding: 20px; overflow-y: auto; background: #fdfdfd; min-height: 300px;">
-            <div class="bot-msg" style="margin-bottom: 15px; background: #f1f5f9; padding: 12px; border-radius: 15px 15px 15px 0; font-size: 14px; line-height: 1.5;">
-                ආයුබෝවන්! <b>ප්‍රතිපාදන බෙදාහැරීමේ පද්ධතියට (ADS)</b> ඔබව සාදරයෙන් පිළිගනිමු. මම ඔබට සහය වීමට සූදානම්. <br><br>
-                පහත දැක්වෙන විකල්ප වලින් ඔබට අවශ්‍ය දේ තෝරන්න:
-                <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
-                    <button onclick="handleBotOption('how_to_login')" style="background: white; border: 1px solid #1a5f7a; color: #1a5f7a; padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 12px;">Login වන්නේ කෙසේද?</button>
-                    <button onclick="handleBotOption('new_request')" style="background: white; border: 1px solid #1a5f7a; color: #1a5f7a; padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 12px;">ඉල්ලීමක් ඉදිරිපත් කිරීම</button>
-                    <button onclick="handleBotOption('check_status')" style="background: white; border: 1px solid #1a5f7a; color: #1a5f7a; padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 12px;">තත්ත්වය පරීක්ෂා කිරීම</button>
-                    <button onclick="handleBotOption('tech_support')" style="background: #1a5f7a; color: white; border: none; padding: 5px 10px; border-radius: 20px; cursor: pointer; font-size: 12px;">තාක්ෂණික සහය</button>
-                </div>
-            </div>
-        </div>
-
-        <div style="padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white;">
-            <input type="text" id="user-query" placeholder="ඔබේ ප්‍රශ්නය මෙහි ලියන්න..." style="flex: 1; border: 1px solid #ddd; padding: 10px; border-radius: 8px; font-size: 14px; outline: none;">
-            <button id="send-query" style="background: #1a5f7a; color: white; border: none; width: 40px; height: 40px; border-radius: 8px; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-</div>
-
     <script>
      // Google Apps Script Web App URL
 const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbytS1JHS5rsQf3Oc9EVnjunOZjCJF2l4TYvAdPcv_j2yOHwg82jkNC5i2tRIaaNNG1o/exec';
@@ -2459,83 +2419,6 @@ async function handleLogin() {
         loginBtn.disabled = false;
     }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const launcher = document.getElementById('chatbot-launcher');
-    const panel = document.getElementById('chatbot-panel');
-    const closeBtn = document.getElementById('close-chat');
-    const sendBtn = document.getElementById('send-query');
-    const inputField = document.getElementById('user-query');
-    const chatContent = document.getElementById('chat-content');
-
-    // විවෘත කිරීම/වැසීම
-    launcher.onclick = () => panel.classList.toggle('hidden');
-    closeBtn.onclick = () => panel.classList.add('hidden');
-
-    // පණිවිඩයක් යැවීම
-    window.handleBotOption = function(option) {
-        let userText = "";
-        let botResponse = "";
-
-        switch(option) {
-            case 'how_to_login':
-                userText = "Login වන්නේ කෙසේද?";
-                botResponse = "පද්ධතියට ඇතුළු වීමට: <br>1. මුලින්ම ඔබේ රෝහලේ නම ලැයිස්තුවෙන් තෝරන්න. <br>2. ලබා දී ඇති රහස්පදය (Password) නිවැරදිව ඇතුළත් කරන්න. <br>3. 'Login' බොත්තම ඔබන්න.";
-                break;
-            case 'new_request':
-                userText = "ඉල්ලීමක් ඉදිරිපත් කරන්නේ කෙසේද?";
-                botResponse = "ලොගින් වූ පසු: <br>1. 'New Request' වෙත යන්න. <br>2. අදාල වොට් අංකය,ප්‍රතිපාදන ප්‍රමාණය සහ ඔබගේ විස්තර ඇතුළත් කරන්න . <br>3. 'Submit Request' ක්ලික් කරන්න.";
-                break;
-            case 'check_status':
-                userText = "ඉල්ලීමක තත්ත්වය පරීක්ෂා කරන්නේ කෙසේද?";
-                botResponse = "ඔබේ ඉල්ලීම් වල වත්මන් තත්ත්වය (Pending, Approved, Rejected) 'My Requests' වගුව තුළින් බලාගත හැක. එහි ඇති වර්ණ සංකේත මගින් තත්ත්වය පැහැදිලි කෙරේ.";
-                break;
-            case 'tech_support':
-                userText = "තාක්ෂණික සහය අවශ්‍යයි";
-                botResponse = "වැඩිදුර තාක්ෂණික සහය සඳහා කරුණාකර <b>0112692382</b> අංකය හරහා <b>සංඛ මහතා</b> සම්බන්ධ කරගන්න. ඔහු ඔබට අවශ්‍ය මගපෙන්වීම ලබා දෙනු ඇත.";
-                break;
-        }
-
-        addChatBubble(userText, 'user');
-        setTimeout(() => addChatBubble(botResponse, 'bot'), 600);
-    };
-
-    sendBtn.onclick = processCustomQuery;
-    inputField.onkeypress = (e) => { if(e.key === 'Enter') processCustomQuery(); };
-
-    function processCustomQuery() {
-        const text = inputField.value.trim();
-        if(!text) return;
-
-        addChatBubble(text, 'user');
-        inputField.value = '';
-
-        setTimeout(() => {
-            let reply = "කණගාටුයි, මට එය තේරුම් ගැනීමට අපහසුයි. වඩාත් හොඳ සහයක් සඳහා කරුණාකර තාක්ෂණික අංශය (0112692382) අමතන්න.";
-            
-            const lowerText = text.toLowerCase();
-            if(lowerText.includes("සංඛ") || lowerText.includes("help") || lowerText.includes("සහය")) {
-                reply = "වැඩිදුර තාක්ෂණික සහය සඳහා 0112692382 අංකය හරහා සංඛ මහතා සම්බන්ධ කරගත හැකිය.";
-            } else if(lowerText.includes("වැඩ කරන්නේ නැහැ") || lowerText.includes("error")) {
-                reply = "පද්ධතියේ දෝෂයක් ඇත්නම්, කරුණාකර පිටුව Refresh කර නැවත උත්සාහ කරන්න. නොවිසඳේ නම් 0112692382 අංකයට කතා කරන්න.";
-            }
-            
-            addChatBubble(reply, 'bot');
-        }, 800);
-    }
-
-    function addChatBubble(msg, sender) {
-        const div = document.createElement('div');
-        div.className = sender === 'user' ? 'user-msg' : 'bot-msg';
-        if(sender === 'bot') {
-            div.style.cssText = "margin-bottom: 15px; background: #f1f5f9; padding: 12px; border-radius: 15px 15px 15px 0; font-size: 14px; line-height: 1.5; max-width: 85%;";
-        }
-        div.innerHTML = msg;
-        chatContent.appendChild(div);
-        chatContent.scrollTop = chatContent.scrollHeight;
-    }
-});
-
 
 function logout() {
     logSystemActivity('system', currentUserRole === 'hospital' ? 'Hospital' : 'Administrator', 'Logout');
